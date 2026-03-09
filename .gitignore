@@ -416,3 +416,7 @@ FodyWeavers.xsd
 *.msix
 *.msm
 *.msp
+
+# zlib-ng
+zlib.h
+zlib_name_mangling.h
