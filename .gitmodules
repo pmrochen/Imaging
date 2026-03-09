@@ -4,3 +4,6 @@
 [submodule "half"]
 	path = half
 	url = https://github.com/pmrochen/half.git
+[submodule "RectangleBinPack"]
+	path = RectangleBinPack
+	url = https://github.com/juj/RectangleBinPack.git
