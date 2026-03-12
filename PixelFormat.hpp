@@ -15,17 +15,17 @@ namespace imaging {
 enum class PixelFormat
 {
     UNSPECIFIED,
-	LUMINANCE8, // !DXGI
+	LUMINANCE8, 				  // !DXGI
 	ALPHA8,
 	/*PACKED_*/LUMINANCE8_ALPHA8, // !DXGI	// Packed
-	/*PACKED_*/BGR4, // !DXGI
+	/*PACKED_*/BGR4, 			  // !DXGI
 	/*PACKED_*/BGRA4,
 	/*PACKED_*/BGR5,
 	/*PACKED_*/BGR5_A1,
 	/*PACKED_*/B5_G6_R5,
 	R8,
 	RG8,
-	/*PACKED_*/RGB8,				// Packed
+	/*PACKED_*/RGB8,						// Packed
 	/*PACKED_*/RGBA8,
 	/*PACKED_*/BGR8,
 	/*PACKED_*/BGRA8,
@@ -37,7 +37,7 @@ enum class PixelFormat
 	RG32,
 	RGB32,
 	RGBA32,
-	R8I,							// Signed integer
+	R8I,									// Signed integer
 	RG8I,
 	/*PACKED_*/RGBA8I,
 	R16I,
@@ -47,22 +47,23 @@ enum class PixelFormat
 	RG32I,
 	RGB32I,
 	RGBA32I,
-	/*PACKED_*/R11F_G11F_B10F,		// Floating point packed
-	R16F,							// Floating point
+	/*PACKED_*/R11F_G11F_B10F,				// Floating point packed
+	R16F,									// Floating point
 	RG16F,
 	RGBA16F,
 	R32F,
 	RG32F,
 	RGB32F,
 	RGBA32F,
-	/*PACKED_*/RGB9_E5,				// Shared exponent packed
-	/*COMPRESSED_*/BC1, // DXT1,    // Compressed
-	/*COMPRESSED_*/BC2, // DXT3,
-	/*COMPRESSED_*/BC3, // DXT5,
-	/*COMPRESSED_*/BC4, // RGTC1,
-	/*COMPRESSED_*/BC5, // RGTC2,
-	/*COMPRESSED_*/BC6H, // BPTC_FLOAT,
-	/*COMPRESSED_*/BC7, // BPTC,
+	/*PACKED_*/RGB9_E5,						// Shared exponent packed
+	/*COMPRESSED_*/BC1, 	// DXT1    		// Compressed
+	/*COMPRESSED_*/BC2, 	// DXT3
+	/*COMPRESSED_*/BC3, 	// DXT5
+	/*COMPRESSED_*/BC4, 	// RGTC1
+	/*COMPRESSED_*/BC5, 	// RGTC2
+	/*COMPRESSED_*/BC6HU, 	// BPTC_UNSIGNED_FLOAT
+	/*COMPRESSED_*/BC6HS, 	// BPTC_SIGNED_FLOAT
+	/*COMPRESSED_*/BC7, 	// BPTC
 	COUNT
 };
   
@@ -118,7 +119,8 @@ inline std::string str(PixelFormat format)
 		case PixelFormat::BC3: return "BC3"s;
 		case PixelFormat::BC4: return "BC4"s;
 		case PixelFormat::BC5: return "BC5"s;
-		case PixelFormat::BC6H: return "BC6H"s;
+		case PixelFormat::BC6HU: return "BC6Hu"s;
+		case PixelFormat::BC6HS: return "BC6Hs"s;
 		case PixelFormat::BC7: return "BC7"s;
 		default: throw std::invalid_argument("format");
     }
@@ -176,7 +178,8 @@ inline auto dispatch(PixelFormat format, Func&& f)
 		case PixelFormat::BC3: return f.template operator()<pixel::BC3>();
 		case PixelFormat::BC4: return f.template operator()<pixel::BC4>();
 		case PixelFormat::BC5: return f.template operator()<pixel::BC5>();
-		case PixelFormat::BC6H: return f.template operator()<pixel::BC6H>();
+		case PixelFormat::BC6HU: return f.template operator()<pixel::BC6Hu>();
+		case PixelFormat::BC6HS: return f.template operator()<pixel::BC6Hs>();
 		case PixelFormat::BC7: return f.template operator()<pixel::BC7>();
 		default: throw std::invalid_argument("format");
     }
