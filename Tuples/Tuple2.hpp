@@ -7,6 +7,7 @@
 
 #include <type_traits>
 #include <initializer_list>
+#include <functional>
 #include <utility>
 #include <tuple>
 #include <cstddef>
@@ -161,10 +162,10 @@ struct hash;
 template<typename T>
 struct hash<::imaging::tuples::templates::Tuple2<T>>
 {
-	std::size_t operator()(const ::imaging::tuples::templates::Tuple2<T>& v) const noexcept
+	size_t operator()(const ::imaging::tuples::templates::Tuple2<T>& v) const noexcept
 	{
-		std::hash<T> hasher;
-		std::size_t seed = hasher(v.x) + 0x9e3779b9;
+		hash<T> hasher;
+		size_t seed = hasher(v.x) + 0x9e3779b9;
 		seed ^= hasher(v.y) + 0x9e3779b9 + (seed << 6) + (seed >> 2);
 		return seed;
 	}
