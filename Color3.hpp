@@ -11,11 +11,13 @@
 #include <type_traits>
 #include <concepts>
 #include <algorithm>
+#include <functional>
 #include <utility>
 #include <tuple>
 #include <cstddef>
 #include <cmath>
 #include <Simd/Intrinsics.hpp>
+#include <Simd/Functional.hpp>
 #include "Tuples/Tuple3.hpp"
 #include "ColorSpace.hpp"
 #include "ChannelOrder.hpp"
@@ -1035,14 +1037,27 @@ struct hash;
 template<typename T>
 struct hash<::imaging::templates::Color3<T>>
 {
-	std::size_t operator()(const ::imaging::templates::Color3<T>& c) const noexcept
+	size_t operator()(const ::imaging::templates::Color3<T>& c) const noexcept
 	{
-		std::hash<T> hasher;
-		std::size_t seed = hasher(c.r) + 0x9e3779b9;
+		hash<T> hasher;
+		size_t seed = hasher(c.r) + 0x9e3779b9;
 		seed ^= hasher(c.g) + 0x9e3779b9 + (seed << 6) + (seed >> 2);
 		seed ^= hasher(c.b) + 0x9e3779b9 + (seed << 6) + (seed >> 2);
 		return seed;
 	}
 };
+
+#if SIMD_HAS_FLOAT4
+
+template<>
+struct hash<::imaging::templates::Color3<float>>
+{
+	size_t operator()(const ::imaging::templates::Color3<float>& c) const noexcept
+	{
+		return hash<typename ::simd::float4>()(c.rgb);
+	}
+};
+
+#endif /* SIMD_HAS_FLOAT4 */
 
 } // namespace std
