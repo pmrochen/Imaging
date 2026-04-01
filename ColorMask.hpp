@@ -5,6 +5,8 @@
 
 #pragma once
 
+#include <bitwise_enum.hpp>
+
 namespace imaging {
 
 enum class ColorMask
@@ -17,5 +19,6 @@ enum class ColorMask
     ALPHA = 0x8,
     ALL = 0xF
 };
+ENABLE_ENUM_BITWISE_OPERATORS(ColorMask);
 
 } // namespace imaging
