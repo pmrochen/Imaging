@@ -60,9 +60,10 @@ target_sources(${IMAGING_LIB_NAME}
 			ColorSpace.hpp
 			ImageFormat.hpp
 			Imaging.hpp
+			Pixel.inl
 			PixelFormat.hpp
 			PixelFormatInfo.hpp
-			Pixel.inl
+			Rectangle.hpp
 )
 
 target_compile_features(${IMAGING_LIB_NAME} 

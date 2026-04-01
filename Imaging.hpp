@@ -12,3 +12,4 @@
 #include "PixelFormatInfo.hpp"
 #include "Color3.hpp"
 #include "Color4.hpp"
+#include "Rectangle.hpp"
