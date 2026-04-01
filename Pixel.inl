@@ -10,6 +10,17 @@
 #include <algorithm>
 #include <cstdint>
 
+#ifndef HALF_ENABLE_CPP11_CONSTEXPR
+#define HALF_ENABLE_CPP11_CONSTEXPR 1
+#endif
+#ifndef HALF_ENABLE_CPP11_NOEXCEPT
+#define HALF_ENABLE_CPP11_NOEXCEPT 1
+#endif
+#ifndef HALF_ARITHMETIC_TYPE
+#define HALF_ARITHMETIC_TYPE float
+#endif
+#include <half.hpp>
+
 namespace imaging::pixel {
 
 template<typename Type, int Size, int RBits, int GBits, int BBits, int ABits = 0, bool Compressed = false>
@@ -18,7 +29,7 @@ struct Base
     using DataType = Type;
 
     static constexpr bool COMPRESSED = Compressed;
-    static constexpr bool FLOATING_POINT = std::is_float_v<Type>;
+    static constexpr bool FLOATING_POINT = std::is_floating_point_v<Type>;
     static constexpr bool HAS_ALPHA = (ABits > 0);
 	static constexpr int BIT_DEPTH = RBits + GBits + BBits + ABits;
 	static constexpr int NUM_COMPONENTS = (int)(RBits > 0) + (int)(GBits > 0) + (int)(BBits > 0) + (int)(ABits > 0);
@@ -28,10 +39,10 @@ struct Base
 	static constexpr int G_BITS = GBits;
 	static constexpr int B_BITS = BBits;
 	static constexpr int A_BITS = ABits;
-	static constexpr int R_MAX = (1 << RBits) - 1;
-	static constexpr int G_MAX = (1 << GBits) - 1;
-	static constexpr int B_MAX = (1 << BBits) - 1;
-	static constexpr int A_MAX = (1 << ABits) - 1;
+	static constexpr int R_MAX = (int)((1ll << RBits) - 1ll);
+	static constexpr int G_MAX = (int)((1ll << GBits) - 1ll);
+	static constexpr int B_MAX = (int)((1ll << BBits) - 1ll);
+	static constexpr int A_MAX = (int)((1ll << ABits) - 1ll);
 };
 
 template<typename Type, int NComponents>
@@ -70,10 +81,19 @@ struct PackedBgr : public Packed<Type, RBits, GBits, BBits, 0, BBits + GBits, BB
 template<typename Type, int RBits = sizeof(Type)*2, int GBits = sizeof(Type)*2, int BBits = sizeof(Type)*2, int ABits = sizeof(Type)*2>
 struct PackedBgra : public Packed<Type, RBits, GBits, BBits, ABits, BBits + GBits, BBits, 0, BBits + GBits + RBits> {};
 
+struct Bgr4 : public PackedBgr<std::uint16_t, 4, 4, 4> {};
+struct Bgra4 : public PackedBgra<std::uint16_t, 4, 4, 4, 4> {};
+struct Bgr5 : public PackedBgr<std::uint16_t, 5, 5, 5> {};
+struct Bgr5A1 : public PackedBgra<std::uint16_t, 5, 5, 5, 1> {};
+struct B5G6R5 : public PackedBgr<std::uint16_t, 5, 6, 5> {};
+
+struct R8 : public Sequential<std::uint8_t, 1> {};
+struct Rg8 : public Sequential<std::uint8_t, 2> {};
 struct Rgb8 : public PackedRgb<std::uint32_t, 8, 8, 8> {};
 struct Rgba8 : public PackedRgba<std::uint32_t, 8, 8, 8, 8> {};
 struct Bgr8 : public PackedBgr<std::uint32_t, 8, 8, 8> {};
 struct Bgra8 : public PackedBgra<std::uint32_t, 8, 8, 8, 8> {};
+struct Rgb10A2 : public PackedRgba<std::uint32_t, 10, 10, 10, 2> {};
 
 struct R16 : public Sequential<std::uint16_t, 1> {};
 struct Rg16 : public Sequential<std::uint16_t, 2> {};
@@ -84,6 +104,10 @@ struct Rg32 : public Sequential<std::uint32_t, 2> {};
 struct Rgb32 : public Sequential<std::uint32_t, 3> {};
 struct Rgba32 : public Sequential<std::uint32_t, 4> {};
 
+struct R8i : public Sequential<std::int8_t, 1> {};
+struct Rg8i : public Sequential<std::int8_t, 2> {};
+//struct Rgba8i : public PackedRgba<std::int32_t, 8, 8, 8, 8> {}; // #TODO
+
 struct R16i : public Sequential<std::int16_t, 1> {};
 struct Rg16i : public Sequential<std::int16_t, 2> {};
 struct Rgba16i : public Sequential<std::int16_t, 4> {};
@@ -93,9 +117,9 @@ struct Rg32i : public Sequential<std::int32_t, 2> {};
 struct Rgb32i : public Sequential<std::int32_t, 3> {};
 struct Rgba32i : public Sequential<std::int32_t, 4> {};
 
-//struct R16f : public Sequential<half_float::half, 1> {}; // #TODO
-//struct Rg16f : public Sequential<half_float::half, 2> {};
-//struct Rgba16f : public Sequential<half_float::half, 4> {};
+struct R16f : public Sequential<half_float::half, 1> {};
+struct Rg16f : public Sequential<half_float::half, 2> {};
+struct Rgba16f : public Sequential<half_float::half, 4> {};
 
 struct R32f : public Sequential<float, 1> {};
 struct Rg32f : public Sequential<float, 2> {};
@@ -105,10 +129,10 @@ struct Rgba32f : public Sequential<float, 4> {};
 template<typename TResult, bool Scale, int MaxValue, typename TSource>
 inline TResult convert(TSource x)
 {
-    static_assert(std::is_integral_v<TResult> && (std::is_integral_v<TSource> || std::is_float_v<TSource>));
-    if constexpr (!Scale || (!std::is_float_v<TSource> && std::is_unsigned_v<TSource> && ((int)std::numeric_limits<TSource>::max() == MaxValue)))
+    static_assert(std::is_integral_v<TResult> && (std::is_integral_v<TSource> || std::is_floating_point_v<TSource>));
+    if constexpr (!Scale || (!std::is_floating_point_v<TSource> && std::is_unsigned_v<TSource> && ((int)std::numeric_limits<TSource>::max() == MaxValue)))
         return TResult(x);
-    else if constexpr (std::is_float_v<TSource>)
+    else if constexpr (std::is_floating_point_v<TSource>)
         return TResult(std::clamp(int(TSource(0.5) + x*TSource(MaxValue)), 0, MaxValue));
     else if constexpr (std::is_unsigned_v<TSource>)
         return std::min(TResult(x), TResult(MaxValue));
@@ -127,7 +151,7 @@ inline typename TPixel::PackedType pack(TComponent r, TComponent g, TComponent b
         v = convert<typename TPixel::PackedType, Scale, TPixel::R_MAX>(r); 
     if constexpr (TPixel::G_BITS > 0)
         v |= convert<typename TPixel::PackedType, Scale, TPixel::G_MAX>(g) << TPixel::G_SHIFT;
-    if constexpr (TPixel::B_BITS > 0) && (TPixel::B_SHIFT > 0)
+    if constexpr ((TPixel::B_BITS > 0) && (TPixel::B_SHIFT > 0))
         v |= convert<typename TPixel::PackedType, Scale, TPixel::B_MAX>(b) << TPixel::B_SHIFT;
     else if constexpr (TPixel::B_BITS > 0)
         v |= convert<typename TPixel::PackedType, Scale, TPixel::B_MAX>(b);
@@ -147,7 +171,7 @@ inline typename TPixel::PackedType pack(TComponent r, TComponent g, TComponent b
         v = convert<typename TPixel::PackedType, Scale, TPixel::R_MAX>(r); 
     if constexpr (TPixel::G_BITS > 0)
         v |= convert<typename TPixel::PackedType, Scale, TPixel::G_MAX>(g) << TPixel::G_SHIFT;
-    if constexpr (TPixel::B_BITS > 0) && (TPixel::B_SHIFT > 0)
+    if constexpr ((TPixel::B_BITS > 0) && (TPixel::B_SHIFT > 0))
         v |= convert<typename TPixel::PackedType, Scale, TPixel::B_MAX>(b) << TPixel::B_SHIFT;
     else if constexpr (TPixel::B_BITS > 0)
         v |= convert<typename TPixel::PackedType, Scale, TPixel::B_MAX>(b);

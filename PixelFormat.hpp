@@ -132,9 +132,9 @@ inline auto dispatch(PixelFormat format, Func&& f)
 	switch (format)
 	{
 		//case PixelFormat::UNSPECIFIED:
-		case PixelFormat::LUMINANCE8: return f.template operator()<pixel::Luminance8>();
-		case PixelFormat::ALPHA8: return f.template operator()<pixel::Alpha8>();
-		case PixelFormat::LUMINANCE8_ALPHA8: return f.template operator()<pixel::Luminance8Alpha8>();
+		//case PixelFormat::LUMINANCE8: return f.template operator()<pixel::Luminance8>(); // #TODO
+		//case PixelFormat::ALPHA8: return f.template operator()<pixel::Alpha8>(); // #TODO
+		//case PixelFormat::LUMINANCE8_ALPHA8: return f.template operator()<pixel::Luminance8Alpha8>(); // #TODO
 		case PixelFormat::BGR4: return f.template operator()<pixel::Bgr4>();
 		case PixelFormat::BGRA4: return f.template operator()<pixel::Bgra4>();
 		case PixelFormat::BGR5: return f.template operator()<pixel::Bgr5>();
@@ -156,7 +156,7 @@ inline auto dispatch(PixelFormat format, Func&& f)
 		case PixelFormat::RGBA32: return f.template operator()<pixel::Rgba32>();
 		case PixelFormat::R8I: return f.template operator()<pixel::R8i>();
 		case PixelFormat::RG8I: return f.template operator()<pixel::Rg8i>();
-		case PixelFormat::RGBA8I: return f.template operator()<pixel::Rgba8i>();
+		//case PixelFormat::RGBA8I: return f.template operator()<pixel::Rgba8i>(); // #TODO
 		case PixelFormat::R16I: return f.template operator()<pixel::R16i>();
 		case PixelFormat::RG16I: return f.template operator()<pixel::Rg16i>();
 		case PixelFormat::RGBA16I: return f.template operator()<pixel::Rgba16i>();
@@ -164,7 +164,7 @@ inline auto dispatch(PixelFormat format, Func&& f)
 		case PixelFormat::RG32I: return f.template operator()<pixel::Rg32i>();
 		case PixelFormat::RGB32I: return f.template operator()<pixel::Rgb32i>();
 		case PixelFormat::RGBA32I: return f.template operator()<pixel::Rgba32i>();
-		case PixelFormat::R11F_G11F_B10F: return f.template operator()<pixel::R11fG11fB10f>();
+		//case PixelFormat::R11F_G11F_B10F: return f.template operator()<pixel::R11fG11fB10f>(); // #TODO
 		case PixelFormat::R16F: return f.template operator()<pixel::R16f>();
 		case PixelFormat::RG16F: return f.template operator()<pixel::Rg16f>();
 		case PixelFormat::RGBA16F: return f.template operator()<pixel::Rgba16f>();
@@ -172,15 +172,15 @@ inline auto dispatch(PixelFormat format, Func&& f)
 		case PixelFormat::RG32F: return f.template operator()<pixel::Rg32f>();
 		case PixelFormat::RGB32F: return f.template operator()<pixel::Rgb32f>();
 		case PixelFormat::RGBA32F: return f.template operator()<pixel::Rgba32f>();
-		case PixelFormat::RGB9_E5: return f.template operator()<pixel::Rgb9E5>();
-		case PixelFormat::BC1: return f.template operator()<pixel::BC1>();
-		case PixelFormat::BC2: return f.template operator()<pixel::BC2>();
-		case PixelFormat::BC3: return f.template operator()<pixel::BC3>();
-		case PixelFormat::BC4: return f.template operator()<pixel::BC4>();
-		case PixelFormat::BC5: return f.template operator()<pixel::BC5>();
-		case PixelFormat::BC6HU: return f.template operator()<pixel::BC6Hu>();
-		case PixelFormat::BC6HS: return f.template operator()<pixel::BC6Hs>();
-		case PixelFormat::BC7: return f.template operator()<pixel::BC7>();
+		//case PixelFormat::RGB9_E5: return f.template operator()<pixel::Rgb9E5>(); // #TODO
+		//case PixelFormat::BC1: return f.template operator()<pixel::BC1>(); // #TODO
+		//case PixelFormat::BC2: return f.template operator()<pixel::BC2>(); // #TODO
+		//case PixelFormat::BC3: return f.template operator()<pixel::BC3>(); // #TODO
+		//case PixelFormat::BC4: return f.template operator()<pixel::BC4>(); // #TODO
+		//case PixelFormat::BC5: return f.template operator()<pixel::BC5>(); // #TODO
+		//case PixelFormat::BC6HU: return f.template operator()<pixel::BC6Hu>(); // #TODO
+		//case PixelFormat::BC6HS: return f.template operator()<pixel::BC6Hs>(); // #TODO
+		//case PixelFormat::BC7: return f.template operator()<pixel::BC7>(); // #TODO
 		default: throw std::invalid_argument("format");
     }
 }
