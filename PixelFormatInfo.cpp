@@ -7,7 +7,7 @@
 
 namespace imaging {
 
-/*static*/ const PixelFormatInfo PixelFormatInfo::infos_[PixelFormat::COUNT] =
+/*static*/ const PixelFormatInfo PixelFormatInfo::infos_[(unsigned int)PixelFormat::COUNT] =
 {
 	//						chn col hdr		comp	float	packed	depth	quantization	sign
 	{ "Unspecified",		0,	0,	false,	false,	false,	false,	0,		0u,				false },

@@ -6,19 +6,18 @@
 #pragma once
 
 #include <string>
-#include <cstddef>
+#include <cstdint>
+#include "ColorMask.hpp"
 #include "PixelFormat.hpp"
 
 namespace imaging {
 
 struct PixelFormatInfo
 {
-	PixelFormatInfo() = default;
-
-	explicit PixelFormatInfo(PixelFormat pixelFormat) noexcept
+	static const PixelFormatInfo& fromPixelFormat(PixelFormat pixelFormat) noexcept
 	{
-		unsigned int format = (unsigned int)pixelFormat;
-		*this = infos_[(format < PixelFormat::COUNT) ? format : 0u];
+		unsigned int index = (unsigned int)pixelFormat;
+		return infos_[(index < (unsigned int)PixelFormat::COUNT) ? index : 0u];
 	}
 
 	const std::string& getName() const noexcept { return name; }
@@ -47,7 +46,7 @@ struct PixelFormatInfo
 	bool sign;
 
 private:
-	static const PixelFormatInfo infos_[PixelFormat::COUNT];
+	static const PixelFormatInfo infos_[(unsigned int)PixelFormat::COUNT];
 };
 
 } // namespace imaging
