@@ -28,6 +28,8 @@ target_include_directories(${IMAGING_LIB_NAME}
 	PUBLIC
 		$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/half/include>
 		$<INSTALL_INTERFACE:half/include>
+		$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/bitwise-enum>
+		$<INSTALL_INTERFACE:bitwise-enum>
 )
 
 target_sources(${IMAGING_LIB_NAME}
@@ -39,7 +41,6 @@ target_sources(${IMAGING_LIB_NAME}
     	FILE_SET privateHeaders
 	    TYPE HEADERS
     	FILES
-			half/include/half.hpp
 			RectangleBinPack/MaxRectsBinPack.h
 			Tuples/Tuples.hpp
 			Tuples/Tuple2.hpp
@@ -50,6 +51,8 @@ target_sources(${IMAGING_LIB_NAME}
     	FILE_SET publicHeaders
 	    TYPE HEADERS
     	FILES
+			half/include/half.hpp
+			bitwise-enum/bitwise_enum.hpp
 			ChannelOrder.hpp
 			Color3.hpp
 			Color4.hpp
