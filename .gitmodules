@@ -22,3 +22,6 @@
 [submodule "zlib-ng"]
 	path = zlib-ng
 	url = https://github.com/zlib-ng/zlib-ng.git
+[submodule "bitwise-enum"]
+	path = bitwise-enum
+	url = https://github.com/jonesinator/bitwise-enum.git
