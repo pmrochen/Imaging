@@ -14,9 +14,9 @@ namespace imaging {
 
 struct PixelFormatInfo
 {
-	static const PixelFormatInfo& fromPixelFormat(PixelFormat pixelFormat) noexcept
+	static const PixelFormatInfo& get(PixelFormat format) noexcept
 	{
-		unsigned int index = (unsigned int)pixelFormat;
+		unsigned int index = (unsigned int)format;
 		return infos_[(index < (unsigned int)PixelFormat::COUNT) ? index : 0u];
 	}
 
@@ -25,7 +25,7 @@ struct PixelFormatInfo
 	int getNumberOfChannels() const noexcept { return nChannels; }
 	int getNumberOfColorChannels() const noexcept { return nColorChannels; }
 	bool hasAlphaChannel() const noexcept { return (nChannels > nColorChannels); }
-	bool isHighDynamicRange() const noexcept { return hdr; }
+	bool hasHighDynamicRange() const noexcept { return hdr; }
 	bool isCompressed() const noexcept { return compressed; }
 	bool isFloatingPoint() const noexcept { return floatingPoint; }
 	bool isPacked/*Color*/() const noexcept { return packed; }

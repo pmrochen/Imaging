@@ -3,6 +3,8 @@
  *	Author: Pawel Mrochen
  */
 
+#include "ColorMask.hpp"
+#include "PixelFormat.hpp"
 #include "PixelFormatInfo.hpp"
 
 namespace imaging {
@@ -62,5 +64,22 @@ namespace imaging {
 	{ "BC7",				4,	3,	false,	true,	false,	true,	8,		0xFFFEFEFEu,	false }
 	//						chn col hdr		comp	float	packed	depth	quantization
 };
+
+ColorMask PixelFormatInfo::getChannels() const noexcept
+{
+	static const ColorMask masks[] =
+	{
+		ColorMask::NONE,
+		ColorMask::RED,
+		ColorMask::RED | ColorMask::GREEN,
+		ColorMask::RED | ColorMask::GREEN | ColorMask::BLUE,
+	};
+
+	ColorMask mask = masks[getNumberOfColorChannels()];
+	if (hasAlphaChannel())
+		mask |= ColorMask::ALPHA;
+
+	return mask;
+}
 
 } // namespace imaging

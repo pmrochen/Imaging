@@ -7,6 +7,8 @@
 
 #include <stdexcept>
 #include <string>
+#include <cstdint>
+#include "ColorMask.hpp"
 #include "ChannelOrder.hpp"
 #include "Pixel.inl"
 
@@ -185,15 +187,15 @@ inline auto dispatch(PixelFormat format, Func&& f)
     }
 }
 
-inline int bits(PixelFormat format)
-{
-	return dispatch(format, []<typename T>() { return T::BIT_DEPTH; });
-}
-
-inline int size(PixelFormat format)
-{
-	return dispatch(format, []<typename T>() { return T::SIZE; });
-}
+//inline int bits(PixelFormat format)
+//{
+//	return dispatch(format, []<typename T>() { return T::BIT_DEPTH; });
+//}
+//
+//inline int size(PixelFormat format)
+//{
+//	return dispatch(format, []<typename T>() { return T::SIZE; });
+//}
 
 template<typename TResult, typename TComponent>
 inline TResult makePackedRgb/*packRgb*/(TComponent r, TComponent g, TComponent b) noexcept
@@ -283,4 +285,80 @@ inline TResult unpackNative(TPacked c) noexcept
 #endif
 }
 */
+} // namespace imaging
+
+#include "PixelFormatInfo.hpp"
+
+namespace imaging {
+
+inline bool isValid(PixelFormat format) noexcept 
+{ 
+	return ((unsigned int)format < (unsigned int)PixelFormat::COUNT); 
+}
+
+inline ColorMask getChannels(PixelFormat format) noexcept 
+{ 
+	return PixelFormatInfo::get(format).getChannels(); 
+}
+
+inline int getNumberOfChannels(PixelFormat format) noexcept 
+{ 
+	return PixelFormatInfo::get(format).nChannels; 
+}
+
+inline int getNumberOfColorChannels(PixelFormat format) noexcept 
+{ 
+	return PixelFormatInfo::get(format).nColorChannels; 
+}
+
+inline bool hasAlphaChannel(PixelFormat format) noexcept 
+{ 
+	return PixelFormatInfo::get(format).hasAlphaChannel(); 
+}
+
+inline bool hasHighDynamicRange(PixelFormat format) noexcept 
+{ 
+	return PixelFormatInfo::get(format).hdr; 
+}
+
+inline bool isCompressed(PixelFormat format) noexcept 
+{ 
+	return PixelFormatInfo::get(format).compressed; 
+}
+
+inline bool isFloatingPoint(PixelFormat format) noexcept 
+{ 
+	return PixelFormatInfo::get(format).floatingPoint; 
+}
+
+inline bool isPacked/*Color*/(PixelFormat format) noexcept 
+{ 
+	return PixelFormatInfo::get(format).packed; 
+}
+
+//inline bool hasSharedExponent(PixelFormat format) noexcept 
+//{
+//	return (format == PixelFormat::RGB9_E5); 
+//}
+
+inline int getBitDepth(PixelFormat format) noexcept 
+{ 
+	return PixelFormatInfo::get(format).bitDepth; 
+}
+
+//inline int getSize(PixelFormat format) noexcept 
+//{
+//	return getBitDepth() >> 3; 
+//}
+
+//inline std::uint32_t getQuantizationMask(PixelFormat format) noexcept 
+//{
+//	return PixelFormatInfo::get(format).quantizationMask; 
+//}
+
+inline bool isSigned(PixelFormat format) noexcept 
+{ 
+	return PixelFormatInfo::get(format).sign; 
+}
+
 } // namespace imaging
