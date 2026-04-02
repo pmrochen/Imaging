@@ -22,6 +22,7 @@
 #include "ColorSpace.hpp"
 #include "ChannelOrder.hpp"
 #include "PixelFormat.hpp"
+#include "Size.hpp" // for Uninitialized, Arithmetic, Constants
 #include "Color3.hpp"
 
 namespace imaging {

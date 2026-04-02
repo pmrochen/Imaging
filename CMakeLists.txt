@@ -63,7 +63,9 @@ target_sources(${IMAGING_LIB_NAME}
 			Pixel.inl
 			PixelFormat.hpp
 			PixelFormatInfo.hpp
+			Point.hpp
 			Rectangle.hpp
+			Size.hpp
 )
 
 target_compile_features(${IMAGING_LIB_NAME} 
