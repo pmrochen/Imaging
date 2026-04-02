@@ -29,7 +29,9 @@ struct Rectangle
 	Rectangle() = default;
 	explicit Rectangle(Uninitialized) noexcept : location(Uninitialized()), size(Uninitialized()) {}
 	constexpr Rectangle(const Point<T>& location, const Size<T>& size) noexcept : location(location), size(size) {}
+	constexpr explicit Rectangle(const Size<T>& size) noexcept : location(), size(size) {}
 	constexpr Rectangle(T x, T y, T width, T height) noexcept : location(x, y), size(width, height) {}
+	constexpr Rectangle(T width, T height) noexcept : location(), size(width, height) {}
 	template<Arithmetic U> explicit Rectangle(const Rectangle<U>& rectangle) noexcept;
 
 	bool operator==(const Rectangle& rectangle) const noexcept { return (location == rectangle.location) && (size == rectangle.size); }
@@ -50,11 +52,11 @@ struct Rectangle
 	Rectangle& set(const Point<T>& location, const Size<T>& size) noexcept { this->location = location; this->size = size; return *this; }
 	Rectangle& set(T x, T y, T width, T height) noexcept { location.set(x, y); size.set(width, height); return *this; }
 	const Point<T>& getLocation() const noexcept { return location; }
-	Rectangle& setLocation(const Point<T>& location) noexcept { this->location = location; return *this; }
-	Rectangle& setLocation(T x, T y) noexcept { location.set(x, y); return *this; }
+	void setLocation(const Point<T>& location) noexcept { this->location = location; }
+	void setLocation(T x, T y) noexcept { location.set(x, y); }
 	const Size<T>& getSize() const noexcept { return size; }
-	Rectangle& setSize(const Size<T>& size) noexcept { this->size = size; return *this; }
-	Rectangle& setSize(T width, T height) noexcept { size.set(width, height); return *this; }
+	void setSize(const Size<T>& size) noexcept { this->size = size; }
+	void setSize(T width, T height) noexcept { size.set(width, height); }
 	const Point<T>& getMinimum() const noexcept { return location; }
 	Point<T> getMaximum() const noexcept { return location + size; }
 	T getX() const noexcept { return location.x; }
