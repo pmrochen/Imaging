@@ -15,7 +15,7 @@ namespace imaging {
 
 enum class ColorSpace
 {
-    UNSPECIFIED,
+    //UNSPECIFIED,
 	LINEAR,
 	SRGB
 	//XYZ
