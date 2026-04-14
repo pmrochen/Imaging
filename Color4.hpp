@@ -28,6 +28,8 @@
 namespace imaging {
 namespace templates {
 
+using tuples::templates::Tuple4;
+
 template<typename T>
 	requires (std::floating_point<T> || std::integral<T>)
 struct Color4;
@@ -39,6 +41,8 @@ struct Color4<T>
 	using ComponentType = T;
 	using ConstArg = const Color4&;
 	using ConstResult = const Color4&;
+	using TupleType = std::tuple<T, T, T, T>;
+	template<Arithmetic U> OtherTupleType = std::tuple<U, U, U, U>;
 
 	static constexpr int NUM_COMPONENTS = 4;
 
@@ -48,17 +52,17 @@ struct Color4<T>
 	constexpr Color4(T r, T g, T b, T a) noexcept : r(r), g(g), b(b), a(a) {}
 	constexpr Color4(const Color3<T>& c) noexcept : r(c.r), g(c.g), b(c.b), a(T(1)) {}
 	constexpr Color4(const Color3<T>& c, T a) noexcept : r(c.r), g(c.g), b(c.b), a(a) {}
-	explicit Color4(const tuples::templates::Tuple4<T>& t) noexcept : r(t.x), g(t.y), b(t.z), a(t.w) {}
-	template<Arithmetic U> explicit Color4(const tuples::templates::Tuple4<U>& t) noexcept : r(T(t.x)), g(T(t.y)), b(T(t.z)), a(T(t.w)) {}
-	explicit Color4(const std::tuple<T, T, T, T>& t) noexcept : r(std::get<0>(t)), g(std::get<1>(t)), b(std::get<2>(t)), a(std::get<3>(t)) {}
-	template<Arithmetic U> explicit Color4(const std::tuple<U, U, U, U>& t) noexcept : r(T(std::get<0>(t))), g(T(std::get<1>(t))), b(T(std::get<2>(t))), a(T(std::get<3>(t))) {}
+	explicit Color4(const Tuple4<T>& t) noexcept : r(t.x), g(t.y), b(t.z), a(t.w) {}
+	template<Arithmetic U> explicit Color4(const Tuple4<U>& t) noexcept : r(T(t.x)), g(T(t.y)), b(T(t.z)), a(T(t.w)) {}
+	explicit Color4(const TupleType& t) noexcept : r(std::get<0>(t)), g(std::get<1>(t)), b(std::get<2>(t)), a(std::get<3>(t)) {}
+	template<Arithmetic U> explicit Color4(const OtherTupleType<U>& t) noexcept : r(T(std::get<0>(t))), g(T(std::get<1>(t))), b(T(std::get<2>(t))), a(T(std::get<3>(t))) {}
 	explicit Color4(const T* c) noexcept : r(c[0]), g(c[1]), b(c[2]), a(c[3]) {}
 	template<Arithmetic U> explicit Color4(const Color4<U>& c) noexcept : r(T(c.r)), g(T(c.g)), b(T(c.b)), a(T(c.a)) {}
 
-	explicit operator tuples::templates::Tuple4<T>() noexcept { return tuples::templates::Tuple4<T>(r, g, b, a); }
-	template<Arithmetic U> explicit operator tuples::templates::Tuple4<U>() noexcept { return tuples::templates::Tuple4<U>(U(r), U(g), U(b), U(a)); }
-	//explicit operator std::tuple<T, T, T, T>() { return std::tuple<T, T, T, T>(r, g, b, a); }
-	//template<Arithmetic U> explicit operator std::tuple<U, U, U, U>() { return std::tuple<U, U, U, U>(U(r), U(g), U(b), U(a)); }
+	explicit operator Tuple4<T>() noexcept { return Tuple4<T>(r, g, b, a); }
+	template<Arithmetic U> explicit operator Tuple4<U>() noexcept { return Tuple4<U>(U(r), U(g), U(b), U(a)); }
+	//explicit operator TupleType() { return TupleType(r, g, b, a); }
+	//template<Arithmetic U> explicit operator OtherTupleType<U>() { return OtherTupleType<U>(U(r), U(g), U(b), U(a)); }
 	explicit operator T*() noexcept { return &r; }
 	explicit operator const T*() const noexcept { return &r; }
 	T& operator[](int i) noexcept { return (&r)[i]; }
@@ -156,6 +160,8 @@ struct Color4<T>
 	using ComponentType = T;
 	using ConstArg = const Color4&;
 	using ConstResult = const Color4&;
+	using TupleType = std::tuple<T, T, T, T>;
+	template<Arithmetic U> OtherTupleType = std::tuple<U, U, U, U>;
 
 	static constexpr int NUM_COMPONENTS = 4;
 
@@ -165,17 +171,17 @@ struct Color4<T>
 	constexpr Color4(T r, T g, T b, T a) noexcept : r(r), g(g), b(b), a(a) {}
 	constexpr Color4(const Color3<T>& c) noexcept : r(c.r), g(c.g), b(c.b), a(std::numeric_limits<T>::max()) {}
 	constexpr Color4(const Color3<T>& c, T a) noexcept : r(c.r), g(c.g), b(c.b), a(a) {}
-	explicit Color4(const tuples::templates::Tuple4<T>& t) noexcept : r(t.x), g(t.y), b(t.z), a(t.w) {}
-	template<Arithmetic U> explicit Color4(const tuples::templates::Tuple4<U>& t) noexcept : r(T(t.x)), g(T(t.y)), b(T(t.z)), a(T(t.w)) {}
-	explicit Color4(const std::tuple<T, T, T, T>& t) noexcept : r(std::get<0>(t)), g(std::get<1>(t)), b(std::get<2>(t)), a(std::get<3>(t)) {}
-	template<Arithmetic U> explicit Color4(const std::tuple<U, U, U, U>& t) noexcept : r(T(std::get<0>(t))), g(T(std::get<1>(t))), b(T(std::get<2>(t))), a(T(std::get<3>(t))) {}
+	explicit Color4(const Tuple4<T>& t) noexcept : r(t.x), g(t.y), b(t.z), a(t.w) {}
+	template<Arithmetic U> explicit Color4(const Tuple4<U>& t) noexcept : r(T(t.x)), g(T(t.y)), b(T(t.z)), a(T(t.w)) {}
+	explicit Color4(const TupleType& t) noexcept : r(std::get<0>(t)), g(std::get<1>(t)), b(std::get<2>(t)), a(std::get<3>(t)) {}
+	template<Arithmetic U> explicit Color4(const OtherTupleType<U>& t) noexcept : r(T(std::get<0>(t))), g(T(std::get<1>(t))), b(T(std::get<2>(t))), a(T(std::get<3>(t))) {}
 	explicit Color4(const T* c) noexcept : r(c[0]), g(c[1]), b(c[2]), a(c[3]) {}
 	template<Arithmetic U> explicit Color4(const Color4<U>& c) noexcept : r(T(c.r)), g(T(c.g)), b(T(c.b)), a(T(c.a)) {}
 
-	explicit operator tuples::templates::Tuple4<T>() noexcept { return tuples::templates::Tuple4<T>(r, g, b, a); }
-	template<Arithmetic U> explicit operator tuples::templates::Tuple4<U>() noexcept { return tuples::templates::Tuple4<U>(U(r), U(g), U(b), U(a)); }
-	//explicit operator std::tuple<T, T, T, T>() { return std::tuple<T, T, T, T>(r, g, b, a); }
-	//template<Arithmetic U> explicit operator std::tuple<U, U, U, U>() { return std::tuple<U, U, U, U>(U(r), U(g), U(b), U(a)); }
+	explicit operator Tuple4<T>() noexcept { return Tuple4<T>(r, g, b, a); }
+	template<Arithmetic U> explicit operator Tuple4<U>() noexcept { return Tuple4<U>(U(r), U(g), U(b), U(a)); }
+	//explicit operator TupleType() { return TupleType(r, g, b, a); }
+	//template<Arithmetic U> explicit operator OtherTupleType<U>() { return OtherTupleType<U>(U(r), U(g), U(b), U(a)); }
 	explicit operator T* () noexcept { return &r; }
 	explicit operator const T* () const noexcept { return &r; }
 	T& operator[](int i) noexcept { return (&r)[i]; }
@@ -234,6 +240,9 @@ struct Color4<float>
 	using ComponentType = float;
 	using ConstArg = const Color4;
 	using ConstResult = const Color4;
+	using TupleType = std::tuple<float, float, float, float>;
+	template<Arithmetic U> OtherTupleType = std::tuple<U, U, U, U>;
+	using SimdType = simd::float4;
 
 	static constexpr int NUM_COMPONENTS = 4;
 
@@ -243,10 +252,10 @@ struct Color4<float>
 	/*constexpr*/ Color4(float r, float g, float b, float a) noexcept : rgba(simd::set4(r, g, b, a)) {}
 	/*constexpr*/ Color4(const Color3<float>& c) noexcept : rgba(simd::insert3(c, UNIT_A)) {}
 	/*constexpr*/ Color4(const Color3<float>& c, float a) noexcept : rgba(simd::insert<3>(a, c)) {}
-	explicit Color4(const tuples::templates::Tuple4<float>& t) noexcept : rgba(simd::set4(t.x, t.y, t.z, t.w)) {}
-	template<Arithmetic U> explicit Color4(const tuples::templates::Tuple4<U>& t) noexcept : rgba(simd::set4((float)t.x, (float)t.y, (float)t.z, (float)t.w)) {}
-	explicit Color4(const std::tuple<float, float, float, float>& t) noexcept : rgba(simd::set4(std::get<0>(t), std::get<1>(t), std::get<2>(t), std::get<3>(t))) {}
-	template<Arithmetic U> explicit Color4(const std::tuple<U, U, U, U>& t) noexcept : rgba(simd::set4((float)std::get<0>(t), (float)std::get<1>(t), (float)std::get<2>(t), (float)std::get<3>(t))) {}
+	explicit Color4(const Tuple4<float>& t) noexcept : rgba(simd::set4(t.x, t.y, t.z, t.w)) {}
+	template<Arithmetic U> explicit Color4(const Tuple4<U>& t) noexcept : rgba(simd::set4((float)t.x, (float)t.y, (float)t.z, (float)t.w)) {}
+	explicit Color4(const TupleType& t) noexcept : rgba(simd::set4(std::get<0>(t), std::get<1>(t), std::get<2>(t), std::get<3>(t))) {}
+	template<Arithmetic U> explicit Color4(const OtherTupleType<U>& t) noexcept : rgba(simd::set4((float)std::get<0>(t), (float)std::get<1>(t), (float)std::get<2>(t), (float)std::get<3>(t))) {}
 	explicit Color4(const float* c) noexcept : rgba(simd::load4(c)) {}
 	explicit Color4(simd::float4 c) noexcept : rgba(c) {}
 	Color4(const Color4& c) noexcept : rgba(c.rgba) {}
@@ -254,10 +263,10 @@ struct Color4<float>
 	Color4& operator=(const Color4& c) noexcept { rgba = c.rgba; return *this; }
 
 	operator simd::float4() const noexcept { return rgba; }
-	explicit operator tuples::templates::Tuple4<float>() noexcept { return tuples::templates::Tuple4<float>(r, g, b, a); }
-	template<Arithmetic U> explicit operator tuples::templates::Tuple4<U>() noexcept { return tuples::templates::Tuple4<U>(U(r), U(g), U(b), U(a)); }
-	//explicit operator std::tuple<float, float, float, float>() { return std::tuple<float, float, float, float>(r, g, b, a); }
-	//template<Arithmetic U> explicit operator std::tuple<U, U, U, U>() { return std::tuple<U, U, U, U>(U(r), U(g), U(b), U(a)); }
+	explicit operator Tuple4<float>() noexcept { return Tuple4<float>(r, g, b, a); }
+	template<Arithmetic U> explicit operator Tuple4<U>() noexcept { return Tuple4<U>(U(r), U(g), U(b), U(a)); }
+	//explicit operator TupleType() { return TupleType(r, g, b, a); }
+	//template<Arithmetic U> explicit operator OtherTupleType<U>() { return OtherTupleType<U>(U(r), U(g), U(b), U(a)); }
 	explicit operator float* () noexcept { return &r; }
 	explicit operator const float* () const noexcept { return &r; }
 	float& operator[](int i) noexcept { return (&r)[i]; }

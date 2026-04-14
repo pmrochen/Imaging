@@ -22,7 +22,7 @@ struct Uninitialized {};
 constexpr Uninitialized UNINITIALIZED{};
 
 template<typename T>
-concept Arithmetic = (std::floating_point<T> || std::integral<T>); // #TODO Move to Concepts.hpp
+concept Arithmetic = (std::floating_point<T> || std::integral<T>); // #TODO Move to Concepts.inl
 
 template<typename T>
 struct Constants;
@@ -48,16 +48,20 @@ struct Size
 	using ComponentType = T;
 	using ConstArg = const Size&;
 	using ConstResult = const Size&;
+	using PairType = std::pair<T, T>;
+	using TupleType = std::tuple<T, T>;
+	template<Arithmetic U> OtherPairType = std::pair<U, U>;
+	template<Arithmetic U> OtherTupleType = std::tuple<U, U>;
 
 	static constexpr int NUM_COMPONENTS = 2;
 
 	constexpr Size() noexcept : width(), height() {}
 	explicit Size(Uninitialized) noexcept {}
 	constexpr Size(T width, T height) noexcept : width(width), height(height) {}
-	explicit Size(const std::pair<T, T>& t) noexcept : width(t.first), height(t.second) {}
-	template<Arithmetic U> explicit Size(const std::pair<U, U>& t) noexcept : width(T(t.first)), height(T(t.second)) {}
-	explicit Size(const std::tuple<T, T>& t) noexcept : width(std::get<0>(t)), height(std::get<1>(t)) {}
-	template<Arithmetic U> explicit Size(const std::tuple<U, U>& t) noexcept : width(T(std::get<0>(t))), height(T(std::get<1>(t))) {}
+	explicit Size(const PairType& t) noexcept : width(t.first), height(t.second) {}
+	template<Arithmetic U> explicit Size(const OtherPairType<U>& t) noexcept : width(T(t.first)), height(T(t.second)) {}
+	explicit Size(const TupleType& t) noexcept : width(std::get<0>(t)), height(std::get<1>(t)) {}
+	template<Arithmetic U> explicit Size(const OtherTupleType<U>& t) noexcept : width(T(std::get<0>(t))), height(T(std::get<1>(t))) {}
 	template<Arithmetic U> explicit Size(const Size<U>& size) noexcept : width(T(size.width)), height(T(size.height)) {}
 
 	T& operator[](int i) noexcept { return (&width)[i]; }

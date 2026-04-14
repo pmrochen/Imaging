@@ -27,16 +27,20 @@ struct Point
 	using ComponentType = T;
 	using ConstArg = const Point&;
 	using ConstResult = const Point&;
+	using PairType = std::pair<T, T>;
+	using TupleType = std::tuple<T, T>;
+	template<Arithmetic U> OtherPairType = std::pair<U, U>;
+	template<Arithmetic U> OtherTupleType = std::tuple<U, U>;
 
 	static constexpr int NUM_COMPONENTS = 2;
 
 	constexpr Point() noexcept : x(), y() {}
 	explicit Point(Uninitialized) noexcept {}
 	constexpr Point(T x, T y) noexcept : x(x), y(y) {}
-	explicit Point(const std::pair<T, T>& t) noexcept : x(t.first), y(t.second) {}
-	template<Arithmetic U> explicit Point(const std::pair<U, U>& t) noexcept : x(T(t.first)), y(T(t.second)) {}
-	explicit Point(const std::tuple<T, T>& t) noexcept : x(std::get<0>(t)), y(std::get<1>(t)) {}
-	template<Arithmetic U> explicit Point(const std::tuple<U, U>& t) noexcept : x(T(std::get<0>(t))), y(T(std::get<1>(t))) {}
+	explicit Point(const PairType& t) noexcept : x(t.first), y(t.second) {}
+	template<Arithmetic U> explicit Point(const OtherPairType<U>& t) noexcept : x(T(t.first)), y(T(t.second)) {}
+	explicit Point(const TupleType& t) noexcept : x(std::get<0>(t)), y(std::get<1>(t)) {}
+	template<Arithmetic U> explicit Point(const OtherTupleType<U>& t) noexcept : x(T(std::get<0>(t))), y(T(std::get<1>(t))) {}
 	template<Arithmetic U> explicit Point(const Point<U>& point) noexcept : x(T(point.x)), y(T(point.y)) {}
 
 	T& operator[](int i) noexcept { return (&x)[i]; }
