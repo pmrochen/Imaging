@@ -4,8 +4,6 @@
 
 > ⚠️ **Important:** This project is currently under active development. Expect bugs and incomplete features.
 
----
-
 ## Features
 
 - **Image file I/O** 
@@ -13,15 +11,11 @@
 - **Image processing**
 - **Pixel format conversion** 
 
----
-
 ## To Do
 
 - [ ] **This list**
 - [ ] **Unit tests**
 - [ ] **Documentation for usage**
-
----
 
 ## License
 
