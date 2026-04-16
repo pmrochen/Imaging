@@ -56,10 +56,10 @@ struct Color3<T>
 	explicit Color3(const T* c) noexcept : r(c[0]), g(c[1]), b(c[2]) {}
 	template<Arithmetic U> explicit Color3(const Color3<U>& c) noexcept : r(T(c.r)), g(T(c.g)), b(T(c.b)) {}
 
-	explicit operator Tuple3<T>() noexcept { return Tuple3<T>(r, g, b); }
-	template<Arithmetic U> explicit operator Tuple3<U>() noexcept { return Tuple3<U>(U(r), U(g), U(b)); }
-	//explicit operator TupleType() { return TupleType(r, g, b); }
-	//template<Arithmetic U> explicit operator OtherTupleType<U>() { return OtherTupleType<U>(U(r), U(g), U(b)); }
+	operator Tuple3<T>() const noexcept { return Tuple3<T>(r, g, b); }
+	template<Arithmetic U> explicit operator Tuple3<U>() const noexcept { return Tuple3<U>(U(r), U(g), U(b)); }
+	operator TupleType() const noexcept { return TupleType(r, g, b); }
+	template<Arithmetic U> explicit operator OtherTupleType<U>() const noexcept { return OtherTupleType<U>(U(r), U(g), U(b)); }
 	explicit operator T*() noexcept { return &r; }
 	explicit operator const T*() const noexcept { return &r; }
 	T& operator[](int i) noexcept { return (&r)[i]; }
@@ -176,10 +176,10 @@ struct Color3<T>
 	explicit Color3(const T* c) noexcept : r(c[0]), g(c[1]), b(c[2]) {}
 	template<Arithmetic U> explicit Color3(const Color3<U>& c) noexcept : r(T(c.r)), g(T(c.g)), b(T(c.b)) {}
 
-	explicit operator Tuple3<T>() noexcept { return Tuple3<T>(r, g, b); }
-	template<Arithmetic U> explicit operator Tuple3<U>() noexcept { return Tuple3<U>(U(r), U(g), U(b)); }
-	//explicit operator TupleType() { return TupleType(r, g, b); }
-	//template<Arithmetic U> explicit operator OtherTupleType<U>() { return OtherTupleType<U>(U(r), U(g), U(b)); }
+	operator Tuple3<T>() const noexcept { return Tuple3<T>(r, g, b); }
+	template<Arithmetic U> explicit operator Tuple3<U>() const noexcept { return Tuple3<U>(U(r), U(g), U(b)); }
+	operator TupleType() const noexcept { return TupleType(r, g, b); }
+	template<Arithmetic U> explicit operator OtherTupleType<U>() const noexcept { return OtherTupleType<U>(U(r), U(g), U(b)); }
 	explicit operator T* () noexcept { return &r; }
 	explicit operator const T* () const noexcept { return &r; }
 	T& operator[](int i) noexcept { return (&r)[i]; }
@@ -230,7 +230,7 @@ template<std::integral T> const Color3<T> Color3<T>::ZERO{};
 #if SIMD_HAS_FLOAT4
 
 template<>
-struct Color3<float>
+struct alignas(16) Color3<float>
 {
 	using Real = float;
 	using ComponentType = float;
@@ -267,10 +267,10 @@ struct Color3<float>
 	Color3& operator=(const Color3& c) noexcept { rgb = c.rgb; return *this; }
 
 	operator simd::float4() const noexcept { return rgb; }
-	explicit operator Tuple3<float>() noexcept { return Tuple3<float>(r, g, b); }
-	template<Arithmetic U> explicit operator Tuple3<U>() noexcept { return Tuple3<U>(U(r), U(g), U(b)); }
-	//explicit operator TupleType() { return TupleType(r, g, b); }
-	//template<Arithmetic U> explicit operator OtherTupleType<U>() { return OtherTupleType<U>(U(r), U(g), U(b)); }
+	operator Tuple3<float>() const noexcept { return Tuple3<float>(r, g, b); }
+	template<Arithmetic U> explicit operator Tuple3<U>() const noexcept { return Tuple3<U>(U(r), U(g), U(b)); }
+	operator TupleType() const noexcept { return TupleType(r, g, b); }
+	template<Arithmetic U> explicit operator OtherTupleType<U>() const noexcept { return OtherTupleType<U>(U(r), U(g), U(b)); }
 	explicit operator float* () noexcept { return &r; }
 	explicit operator const float* () const noexcept { return &r; }
 	float& operator[](int i) noexcept { return (&r)[i]; }
