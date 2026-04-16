@@ -11,7 +11,9 @@ endif()
 option(IMAGING_USE_ZLIB_NG "Use zlib-ng instead of zlib" ON)
 option(IMAGING_HAS_LIBPNG "Support PNG format" ON)
 
-add_subdirectory(Simd)
+if(NOT TARGET "Simd")
+	add_subdirectory(Simd)
+endif()
 
 if(IMAGING_HAS_LIBPNG)
 	if(IMAGING_USE_ZLIB_NG)
