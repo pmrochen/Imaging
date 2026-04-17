@@ -984,6 +984,9 @@ inline Color4<float> lerp(const Color4<float>& c1, const Color4<float>& c2, floa
 
 #endif /* SIMD_HAS_FLOAT4 */
 
+template<typename T, typename U>
+concept AnyColor = (std::same_as<T, Color3<U>> || std::same_as<T, Color4<U>>);
+
 } // namespace templates
 
 using Color4 = templates::Color4<float>;
