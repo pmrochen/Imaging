@@ -15,7 +15,7 @@ namespace half_float {
 class half;
 } // namespace half_float
 
-namespace imaging::tuples {
+namespace imaging {
 namespace templates {
 
 template<typename T>
@@ -136,7 +136,7 @@ using LongLong3 = templates::Tuple3<long long>;
 using Float3 = templates::Tuple3<float>;
 using Double3 = templates::Tuple3<double>;
 
-} // namespace imaging::tuples
+} // namespace imaging
 
 namespace std {
 
@@ -144,7 +144,7 @@ template<size_t I, typename T>
 struct tuple_element;
 
 template<size_t I, typename T>
-struct tuple_element<I, ::imaging::tuples::templates::Tuple3<T>>
+struct tuple_element<I, ::imaging::templates::Tuple3<T>>
 {
 	using type = T;
 };
@@ -153,7 +153,7 @@ template<typename T>
 struct tuple_size;
 
 template<typename T>
-struct tuple_size<::imaging::tuples::templates::Tuple3<T>> : integral_constant<size_t, 3> 
+struct tuple_size<::imaging::templates::Tuple3<T>> : integral_constant<size_t, 3> 
 {
 };
 
@@ -161,9 +161,9 @@ template<typename T>
 struct hash;
 
 template<typename T>
-struct hash<::imaging::tuples::templates::Tuple3<T>>
+struct hash<::imaging::templates::Tuple3<T>>
 {
-	size_t operator()(const ::imaging::tuples::templates::Tuple3<T>& v) const noexcept
+	size_t operator()(const ::imaging::templates::Tuple3<T>& v) const noexcept
 	{
 		hash<T> hasher;
 		size_t seed = hasher(v.x) + 0x9e3779b9;

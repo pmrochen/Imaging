@@ -27,8 +27,6 @@
 namespace imaging {
 namespace templates {
 
-using tuples::templates::Tuple3;
-
 template<typename T>
 	requires (std::floating_point<T> || std::integral<T>)
 struct Color3;
