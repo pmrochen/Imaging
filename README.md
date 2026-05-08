@@ -16,6 +16,12 @@
 - [ ] **This list**
 - [ ] **Unit tests**
 - [ ] **Documentation for usage**
+- [ ] **Full dependency list**
+
+## Dependencies
+
+- **[RectangleBinPack](https://github.com/juj/RectangleBinPack)** – A Practical Approach to Two-Dimensional Rectangle Bin Packing.
+- **[zlib-ng](https://github.com/zlib-ng/zlib-ng)** – Data compression library for the next generation systems.
 
 ## License
 
