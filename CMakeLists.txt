@@ -82,13 +82,14 @@ target_sources(${IMAGING_LIB_NAME}
 	PRIVATE
     	FILE_SET privateHeaders
 	    TYPE HEADERS
+		BASE_DIRS RectangleBinPack
     	FILES
 			RectangleBinPack/MaxRectsBinPack.h
 				
 	PUBLIC
     	FILE_SET publicHeaders
 	    TYPE HEADERS
-		BASE_DIRS Source
+		BASE_DIRS Source bitwise-enum half/include
     	FILES
 			bitwise-enum/bitwise_enum.hpp
 			half/include/half.hpp
