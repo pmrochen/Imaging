@@ -10,7 +10,7 @@
 #include <cstdint>
 #include "ColorMask.hpp"
 #include "ChannelOrder.hpp"
-#include "Pixel.inl"
+#include "Sampling/Pixel.inl"
 
 namespace imaging {
 

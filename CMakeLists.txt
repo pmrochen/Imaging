@@ -76,40 +76,39 @@ target_include_directories(${IMAGING_LIB_NAME}
 
 target_sources(${IMAGING_LIB_NAME}
 	PRIVATE
-		PixelFormatInfo.cpp
 		RectangleBinPack/MaxRectsBinPack.cpp
+		Source/Imaging/PixelFormatInfo.cpp
 				
 	PRIVATE
     	FILE_SET privateHeaders
 	    TYPE HEADERS
-		#BASE_DIRS Source
     	FILES
 			RectangleBinPack/MaxRectsBinPack.h
-			Tuples/Tuples.hpp
-			Tuples/Tuple2.hpp
-			Tuples/Tuple3.hpp
-			Tuples/Tuple4.hpp
 				
 	PUBLIC
     	FILE_SET publicHeaders
 	    TYPE HEADERS
-		#BASE_DIRS Source
+		BASE_DIRS Source
     	FILES
-			half/include/half.hpp
 			bitwise-enum/bitwise_enum.hpp
-			ChannelOrder.hpp
-			Color3.hpp
-			Color4.hpp
-			ColorMask.hpp
-			ColorSpace.hpp
-			ImageFormat.hpp
-			Imaging.hpp
-			Pixel.inl
-			PixelFormat.hpp
-			PixelFormatInfo.hpp
-			Point.hpp
-			Rectangle.hpp
-			Size.hpp
+			half/include/half.hpp
+			Source/Imaging/ChannelOrder.hpp
+			Source/Imaging/Color3.hpp
+			Source/Imaging/Color4.hpp
+			Source/Imaging/ColorMask.hpp
+			Source/Imaging/ColorSpace.hpp
+			Source/Imaging/ImageFormat.hpp
+			Source/Imaging/Imaging.hpp
+			Source/Imaging/PixelFormat.hpp
+			Source/Imaging/PixelFormatInfo.hpp
+			Source/Imaging/Point.hpp
+			Source/Imaging/Rectangle.hpp
+			Source/Imaging/Size.hpp
+			Source/Imaging/Sampling/Pixel.inl
+			Source/Imaging/Tuples/Tuples.hpp
+			Source/Imaging/Tuples/Tuple2.hpp
+			Source/Imaging/Tuples/Tuple3.hpp
+			Source/Imaging/Tuples/Tuple4.hpp
 )
 
 target_compile_features(${IMAGING_LIB_NAME} 
