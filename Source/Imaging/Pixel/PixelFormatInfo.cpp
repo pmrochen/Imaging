@@ -3,7 +3,7 @@
  *	Author: Pawel Mrochen
  */
 
-#include "ColorMask.hpp"
+#include "../Color/ColorMask.hpp"
 #include "PixelFormat.hpp"
 #include "PixelFormatInfo.hpp"
 

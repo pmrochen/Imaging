@@ -7,7 +7,7 @@
 
 #include <string>
 #include <cstdint>
-#include "ColorMask.hpp"
+#include "../Color/ColorMask.hpp"
 #include "PixelFormat.hpp"
 
 namespace imaging {

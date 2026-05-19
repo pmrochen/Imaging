@@ -77,8 +77,16 @@ target_include_directories(${IMAGING_LIB_NAME}
 target_sources(${IMAGING_LIB_NAME}
 	PRIVATE
 		RectangleBinPack/MaxRectsBinPack.cpp
-		Source/Imaging/PixelFormatInfo.cpp
-				
+		#Source/Imaging/Image/Image.cpp
+		#Source/Imaging/Image/ImageLayer.cpp
+		#Source/Imaging/Image/ImageSequence.cpp
+		#Source/Imaging/Image/ImageView.cpp
+		#Source/Imaging/Image/LayeredImage.cpp
+		#Source/Imaging/Image/SubImage.cpp
+		#Source/Imaging/Image/TextureAtlas.cpp
+		#Source/Imaging/Image/TextureImage.cpp
+		Source/Imaging/Pixel/PixelFormatInfo.cpp
+
 	PRIVATE
     	FILE_SET privateHeaders
 	    TYPE HEADERS
@@ -93,23 +101,38 @@ target_sources(${IMAGING_LIB_NAME}
     	FILES
 			bitwise-enum/bitwise_enum.hpp
 			half/include/half.hpp
-			Source/Imaging/ChannelOrder.hpp
-			Source/Imaging/Color3.hpp
-			Source/Imaging/Color4.hpp
-			Source/Imaging/ColorMask.hpp
-			Source/Imaging/ColorSpace.hpp
-			Source/Imaging/ImageFormat.hpp
-			Source/Imaging/Imaging.hpp
-			Source/Imaging/PixelFormat.hpp
-			Source/Imaging/PixelFormatInfo.hpp
-			Source/Imaging/Point.hpp
-			Source/Imaging/Rectangle.hpp
-			Source/Imaging/Size.hpp
-			Source/Imaging/Sampling/Pixel.inl
+			Source/Imaging/Color/Color3.hpp
+			Source/Imaging/Color/Color4.hpp
+			Source/Imaging/Color/ColorMask.hpp
+			Source/Imaging/Color/ColorSpace.hpp
+			Source/Imaging/Color/ErrorMetric.hpp
+			Source/Imaging/Formats/ImageFormat.hpp
+			Source/Imaging/Geometry/Point.hpp
+			Source/Imaging/Geometry/Rectangle.hpp
+			Source/Imaging/Geometry/Size.hpp
+			Source/Imaging/Image/CubemapFace.hpp
+			#Source/Imaging/Image/Image.hpp
+			Source/Imaging/Image/ImageExtrapolationMode.hpp
+			#Source/Imaging/Image/ImageLayer.hpp
+			#Source/Imaging/Image/ImageSequence.hpp
+			#Source/Imaging/Image/ImageView.hpp
+			#Source/Imaging/Image/LayeredImage.hpp
+			Source/Imaging/Image/MipmapFlags.hpp
+			#Source/Imaging/Image/SubImage.hpp
+			#Source/Imaging/Image/TextureAtlas.hpp
+			#Source/Imaging/Image/TextureImage.hpp
+			Source/Imaging/Image/TextureImageType.hpp
+			Source/Imaging/Pixel/ChannelOrder.hpp
+			Source/Imaging/Pixel/PixelFormat.hpp
+			Source/Imaging/Pixel/PixelFormatInfo.hpp
+			Source/Imaging/Pixel/Pixel.inl
+			Source/Imaging/Sampling/ImageInterpolationMode.hpp
+			Source/Imaging/Sampling/ResamplingFilter.hpp
 			Source/Imaging/Tuples/Tuples.hpp
 			Source/Imaging/Tuples/Tuple2.hpp
 			Source/Imaging/Tuples/Tuple3.hpp
 			Source/Imaging/Tuples/Tuple4.hpp
+			Source/Imaging/Imaging.hpp
 )
 
 target_compile_features(${IMAGING_LIB_NAME} 

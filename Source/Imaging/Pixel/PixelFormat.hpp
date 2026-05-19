@@ -8,9 +8,9 @@
 #include <stdexcept>
 #include <string>
 #include <cstdint>
-#include "ColorMask.hpp"
+#include "../Color/ColorMask.hpp"
 #include "ChannelOrder.hpp"
-#include "Sampling/Pixel.inl"
+#include "../Pixel/Pixel.inl"
 
 namespace imaging {
 

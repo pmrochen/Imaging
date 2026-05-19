@@ -18,11 +18,11 @@
 #include <cmath>
 #include <Simd/Intrinsics.hpp>
 #include <Simd/Functional.hpp>
-#include "Tuples/Tuple4.hpp"
+#include "../Tuples/Tuple4.hpp"
 #include "ColorSpace.hpp"
-#include "ChannelOrder.hpp"
-#include "PixelFormat.hpp"
-#include "Size.hpp" // for Uninitialized, Arithmetic, Constants
+#include "../Pixel/ChannelOrder.hpp"
+#include "../Pixel/PixelFormat.hpp"
+#include "../Geometry/Size.hpp" // for Uninitialized, Arithmetic, Constants
 #include "Color3.hpp"
 
 namespace imaging {
