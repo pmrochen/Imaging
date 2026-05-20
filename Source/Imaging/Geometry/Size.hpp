@@ -22,7 +22,7 @@ struct Uninitialized {};
 constexpr Uninitialized UNINITIALIZED{};
 
 template<typename T>
-concept Arithmetic = (std::floating_point<T> || std::integral<T>); // #TODO Move to Concepts.inl
+concept Arithmetic = (std::floating_point<T> || std::integral<T>); // #TODO Move to Concepts.hpp
 
 template<typename T>
 struct Constants;
