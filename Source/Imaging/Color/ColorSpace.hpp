@@ -9,7 +9,9 @@
 #include <limits>
 #include <algorithm>
 #include <cmath>
+#if IMAGING_HAS_SIMD
 #include <Simd/Intrinsics.hpp>
+#endif
 
 namespace imaging {
 

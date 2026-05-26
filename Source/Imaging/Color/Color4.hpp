@@ -16,8 +16,10 @@
 #include <tuple>
 #include <cstddef>
 #include <cmath>
+#if IMAGING_HAS_SIMD
 #include <Simd/Intrinsics.hpp>
 #include <Simd/Functional.hpp>
+#endif
 #include "../Tuples/Tuple4.hpp"
 #include "ColorSpace.hpp"
 #include "../Pixel/ChannelOrder.hpp"
