@@ -23,3 +23,7 @@
 [submodule "bitwise-enum"]
 	path = bitwise-enum
 	url = https://github.com/jonesinator/bitwise-enum.git
+[submodule "libpng"]
+	path = libpng
+	url = https://github.com/pnggroup/libpng.git
+	branch = libpng16
