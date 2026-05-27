@@ -16,12 +16,10 @@
 [submodule "Imath"]
 	path = Imath
 	url = https://github.com/AcademySoftwareFoundation/Imath.git
-[submodule "libpng"]
-	path = libpng
-	url = https://github.com/pnggroup/libpng.git
 [submodule "zlib-ng"]
 	path = zlib-ng
 	url = https://github.com/zlib-ng/zlib-ng.git
+	branch = stable
 [submodule "bitwise-enum"]
 	path = bitwise-enum
 	url = https://github.com/jonesinator/bitwise-enum.git
