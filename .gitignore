@@ -68,6 +68,7 @@ Testing/
 .cache/
 
 # IDE
+.vs/
 .vscode/
 .zed/
 .idea/
