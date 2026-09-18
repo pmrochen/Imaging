@@ -9,17 +9,30 @@
 #include <limits>
 #include <algorithm>
 #include <cstdint>
+#include <cfenv>
 
-#ifndef HALF_ENABLE_CPP11_CONSTEXPR
-#define HALF_ENABLE_CPP11_CONSTEXPR 1
-#endif
-#ifndef HALF_ENABLE_CPP11_NOEXCEPT
-#define HALF_ENABLE_CPP11_NOEXCEPT 1
-#endif
 #ifndef HALF_ARITHMETIC_TYPE
 #define HALF_ARITHMETIC_TYPE float
 #endif
+
+//#if !defined(FE_INVALID) && defined(FE_ALL_EXCEPT) && (FE_ALL_EXCEPT == 0)
+#ifdef __EMSCRIPTEN__
+#define FE_INVALID 0
+#define FE_DIVBYZERO 0
+#define FE_OVERFLOW 0
+#define FE_UNDERFLOW 0
+#define FE_INEXACT 0
+#endif
+
 #include <half.hpp>
+
+#ifdef __EMSCRIPTEN__
+#undef FE_INVALID
+#undef FE_DIVBYZERO
+#undef FE_OVERFLOW
+#undef FE_UNDERFLOW
+#undef FE_INEXACT
+#endif
 
 namespace imaging::pixel {
 
