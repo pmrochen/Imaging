@@ -14,10 +14,11 @@ FetchContent_Declare(half
 		GIT_TAG be2b81ba0714845e40d6ee4394940dcf898d2dc8
 )
 
-#FetchContent_Declare(RectangleBinPack
-#		GIT_REPOSITORY https://github.com/juj/RectangleBinPack.git
-#		GIT_TAG 83e7e1132d93777e3732dfaae26b0f3703be2036
-#)
+FetchContent_Declare(RectangleBinPack
+		GIT_REPOSITORY https://github.com/juj/RectangleBinPack.git
+		GIT_TAG 83e7e1132d93777e3732dfaae26b0f3703be2036
+		SOURCE_SUBDIR dummy # Avoid CMakeLists.txt
+)
 
 FetchContent_Declare(libsquish
 		GIT_REPOSITORY https://github.com/svn2github/libsquish.git
@@ -128,7 +129,7 @@ if(NOT TARGET half)
 	target_include_directories(half INTERFACE ${half_SOURCE_DIR}/include)
 endif()
 
-#FetchContent_MakeAvailable(RectangleBinPack)
+FetchContent_MakeAvailable(RectangleBinPack)
 
 if(IMAGING_HAS_LIBPNG)
 	if(IMAGING_USE_ZLIB_NG)
@@ -150,6 +151,8 @@ endif()
 add_library(${IMAGING_LIB_NAME} STATIC)
 add_library(Core::${IMAGING_LIB_NAME} ALIAS ${IMAGING_LIB_NAME})
 #set_target_properties(${IMAGING_LIB_NAME} PROPERTIES EXPORT_NAME Core::${IMAGING_LIB_NAME})
+
+target_include_directories(${IMAGING_LIB_NAME} PRIVATE ${rectanglebinpack_SOURCE_DIR})
 
 target_link_libraries(${IMAGING_LIB_NAME} PUBLIC bitwise-enum)
 target_link_libraries(${IMAGING_LIB_NAME} PUBLIC half)
@@ -177,7 +180,7 @@ endif()
 
 target_sources(${IMAGING_LIB_NAME}
 	PRIVATE
-		RectangleBinPack/MaxRectsBinPack.cpp
+		${rectanglebinpack_SOURCE_DIR}/MaxRectsBinPack.cpp
 		#Source/Imaging/Image/Image.cpp
 		#Source/Imaging/Image/ImageLayer.cpp
 		#Source/Imaging/Image/ImageSequence.cpp
@@ -188,12 +191,12 @@ target_sources(${IMAGING_LIB_NAME}
 		#Source/Imaging/Image/TextureImage.cpp
 		Source/Imaging/Pixel/PixelFormatInfo.cpp
 
-	PRIVATE
-   		FILE_SET privateHeaders
-	    TYPE HEADERS
-		BASE_DIRS RectangleBinPack
-    	FILES
-			RectangleBinPack/MaxRectsBinPack.h
+	#PRIVATE
+   		#FILE_SET privateHeaders
+	    #TYPE HEADERS
+		#BASE_DIRS RectangleBinPack
+    	#FILES
+			#RectangleBinPack/MaxRectsBinPack.h
 				
 	PUBLIC
     	FILE_SET publicHeaders
