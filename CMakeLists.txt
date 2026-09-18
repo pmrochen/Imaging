@@ -247,3 +247,9 @@ target_compile_definitions(${IMAGING_LIB_NAME}
 		IMAGING_HAS_FILESYSTEM=$<BOOL:${IMAGING_HAS_FILESYSTEM}>
 		IMAGING_HAS_LIBPNG=$<BOOL:${IMAGING_HAS_LIBPNG}>
 )
+
+target_compile_options(${IMAGING_LIB_NAME}
+	PUBLIC
+		$<$<OR:$<CXX_COMPILER_ID:Clang>,$<CXX_COMPILER_ID:AppleClang>,$<CXX_COMPILER_ID:GNU>>:-Wno-deprecated-literal-operator>
+		#$<$<CXX_COMPILER_ID:MSVC>:/wd4100>
+)
