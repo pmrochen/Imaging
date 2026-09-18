@@ -141,24 +141,15 @@ using Double3 = templates::Tuple3<double>;
 namespace std {
 
 template<size_t I, typename T>
-struct tuple_element;
-
-template<size_t I, typename T>
 struct tuple_element<I, ::imaging::templates::Tuple3<T>>
 {
 	using type = T;
 };
 
 template<typename T>
-struct tuple_size;
-
-template<typename T>
-struct tuple_size<::imaging::templates::Tuple3<T>> : integral_constant<size_t, 3> 
+struct tuple_size<::imaging::templates::Tuple3<T>> : public integral_constant<size_t, 3> 
 {
 };
-
-template<typename T>
-struct hash;
 
 template<typename T>
 struct hash<::imaging::templates::Tuple3<T>>

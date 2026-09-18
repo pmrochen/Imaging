@@ -159,24 +159,15 @@ using Half4 = templates::Tuple4<::half_float::half>;
 namespace std {
 
 template<size_t I, typename T>
-struct tuple_element;
-
-template<size_t I, typename T>
 struct tuple_element<I, ::imaging::templates::Tuple4<T>>
 {
 	using type = T;
 };
 
 template<typename T>
-struct tuple_size;
-
-template<typename T>
-struct tuple_size<::imaging::templates::Tuple4<T>> : integral_constant<size_t, 4> 
+struct tuple_size<::imaging::templates::Tuple4<T>> : public integral_constant<size_t, 4> 
 {
 };
-
-template<typename T>
-struct hash;
 
 template<typename T>
 struct hash<::imaging::templates::Tuple4<T>>
