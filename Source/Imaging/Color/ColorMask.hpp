@@ -20,6 +20,6 @@ enum class ColorMask
     ALL = 0xF
 };
 
-ENABLE_ENUM_BITWISE_OPERATORS(ColorMask);
-
 } // namespace imaging
+
+ENABLE_ENUM_BITWISE_OPERATORS(imaging::ColorMask);

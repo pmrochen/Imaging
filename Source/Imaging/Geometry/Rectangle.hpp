@@ -71,7 +71,7 @@ struct Rectangle
 	T getTop() const noexcept { return location.y; }
 	T getRight() const noexcept { return location.x + size.width; }
 	T getBottom() const noexcept { return location.y + size.height; }
-	template<std::floating_point U /*= T*/> U getAspectRatio() const noexcept { return size.getAspectRatio<U>(); }
+	template<std::floating_point U /*= T*/> U getAspectRatio() const noexcept { return size.template getAspectRatio<U>(); }
 	Rectangle& inflate(const Size<T>& size) noexcept;
 	Rectangle& inflate(T size) noexcept;
 	Rectangle& inflate(T width, T height) noexcept;
@@ -91,11 +91,14 @@ struct Rectangle
 	Size<T> size;
 };
 
-template<typename T> const Rectangle<T> Rectangle<T>::EMPTY{};
+template<typename T> 
+	requires (std::floating_point<T> || std::integral<T>)
+const Rectangle<T> Rectangle<T>::EMPTY{};
 
 template<typename T>
+	requires (std::floating_point<T> || std::integral<T>)
 template<Arithmetic U>
-inline Rectangle<T>::Rectangle(const Rectangle<U>& rectangle) : 
+inline Rectangle<T>::Rectangle(const Rectangle<U>& rectangle) noexcept : 
 	location(T(rectangle.x), T(rectangle.y)), 
 	size(T(rectangle.width), T(rectangle.height)) 
 {
@@ -117,61 +120,71 @@ inline std::basic_ostream<C, T>& operator<<(std::basic_ostream<C, T>& s, const R
 }
 
 template<typename T>
-/*static*/ inline Rectangle<T> Rectangle<T>::fromMinimumMaximum(const Point<T>& minimum, const Point<T>& maximum)
+	requires (std::floating_point<T> || std::integral<T>)
+/*static*/ inline Rectangle<T> Rectangle<T>::fromMinimumMaximum(const Point<T>& minimum, const Point<T>& maximum) noexcept
 {
 	return Rectangle<T>(minimum, maximum - minimum);
 }
 
 template<typename T>
-/*static*/ inline Rectangle<T> Rectangle<T>::fromLeftTopRightBottom(T left, T top, T right, T bottom)
+	requires (std::floating_point<T> || std::integral<T>)
+/*static*/ inline Rectangle<T> Rectangle<T>::fromLeftTopRightBottom(T left, T top, T right, T bottom) noexcept
 { 
 	return Rectangle<T>(left, top, right - left, bottom - top);
 }
 
 template<typename T>
+	requires (std::floating_point<T> || std::integral<T>)
 inline bool Rectangle<T>::isApproxZero() const noexcept requires std::floating_point<T>
 { 
 	return location.isApproxZero() && size.isApproxZero();
 }
 
 template<typename T>
+	requires (std::floating_point<T> || std::integral<T>)
 inline bool Rectangle<T>::approxEquals(const Rectangle<T>& rectangle) const noexcept requires std::floating_point<T>
 { 
 	return location.approxEquals(rectangle.location) && size.approxEquals(rectangle.size);
 }
 
 template<typename T>
+	requires (std::floating_point<T> || std::integral<T>)
 inline bool Rectangle<T>::approxEquals(const Rectangle<T>& rectangle, T tolerance) const noexcept requires std::floating_point<T>
 { 
 	return location.approxEquals(rectangle.location, tolerance) && size.approxEquals(rectangle.size, tolerance);
 }
 
 template<typename T>
+	requires (std::floating_point<T> || std::integral<T>)
 inline bool Rectangle<T>::isFinite() const noexcept requires std::floating_point<T> 
 { 
 	return location.isFinite() && size.isFinite(); 
 }
 
 template<typename T>
-inline Rectangle<T>& Rectangle<T>::inflate(const Size<T>& size)
+	requires (std::floating_point<T> || std::integral<T>)
+inline Rectangle<T>& Rectangle<T>::inflate(const Size<T>& size) noexcept
 {
 	return set(location - size, this->size + size + size);
 }
 
 template<typename T>
-inline Rectangle<T>& Rectangle<T>::inflate(T size) 
+	requires (std::floating_point<T> || std::integral<T>)
+inline Rectangle<T>& Rectangle<T>::inflate(T size) noexcept
 { 
 	return set(location.x - size, location.y - size, this->size.width + size + size, this->size.height + size + size);
 }
 
 template<typename T>
-inline Rectangle<T>& Rectangle<T>::inflate(T width, T height) 
+	requires (std::floating_point<T> || std::integral<T>)
+inline Rectangle<T>& Rectangle<T>::inflate(T width, T height) noexcept
 { 
 	return set(location.x - width, location.y - height, size.width + width + width, size.height + height + height);
 }
 
 template<typename T>
-inline Rectangle<T>& Rectangle<T>::setUnion(const Rectangle<T>& a, const Rectangle<T>& b)
+	requires (std::floating_point<T> || std::integral<T>)
+inline Rectangle<T>& Rectangle<T>::setUnion(const Rectangle<T>& a, const Rectangle<T>& b) noexcept
 {
 	Point<T> minimum = min(a.getMinimum(), b.getMinimum());
 	Point<T> maximum = max(a.getMaximum(), b.getMaximum());
@@ -179,7 +192,8 @@ inline Rectangle<T>& Rectangle<T>::setUnion(const Rectangle<T>& a, const Rectang
 }
 
 template<typename T>
-inline Rectangle<T>& Rectangle<T>::setIntersection(const Rectangle<T>& a, const Rectangle<T>& b)
+	requires (std::floating_point<T> || std::integral<T>)
+inline Rectangle<T>& Rectangle<T>::setIntersection(const Rectangle<T>& a, const Rectangle<T>& b) noexcept
 {
 	Point<T> minimum = max(a.getMinimum(), b.getMinimum());
 	Point<T> maximum = min(a.getMaximum(), b.getMaximum());
@@ -187,33 +201,38 @@ inline Rectangle<T>& Rectangle<T>::setIntersection(const Rectangle<T>& a, const 
 }
 
 template<typename T>
-/*static*/ inline Rectangle<T> Rectangle<T>::makeUnion(const Rectangle<T>& a, const Rectangle<T>& b)
+	requires (std::floating_point<T> || std::integral<T>)
+/*static*/ inline Rectangle<T> Rectangle<T>::makeUnion(const Rectangle<T>& a, const Rectangle<T>& b) noexcept
 { 
 	return Rectangle(Uninitialized()).setUnion(a, b);
 }
 
 template<typename T>
-/*static*/ inline Rectangle<T> Rectangle<T>::makeIntersection(const Rectangle<T>& a, const Rectangle<T>& b)
+	requires (std::floating_point<T> || std::integral<T>)
+/*static*/ inline Rectangle<T> Rectangle<T>::makeIntersection(const Rectangle<T>& a, const Rectangle<T>& b) noexcept
 { 
 	return Rectangle(Uninitialized()).setIntersection(a, b);
 }
 
 template<typename T>
-inline bool Rectangle<T>::contains(const Point<T>& point) const
+	requires (std::floating_point<T> || std::integral<T>)
+inline bool Rectangle<T>::contains(const Point<T>& point) const noexcept
 {
 	return getMinimum().allLessThanEqual(point) && getMaximum().allGreaterThan(point);
 }
 
 template<typename T>
-inline bool Rectangle<T>::contains(const Rectangle<T>& rectangle) const
+	requires (std::floating_point<T> || std::integral<T>)
+inline bool Rectangle<T>::contains(const Rectangle<T>& rectangle) const noexcept
 {
-	return getMinimum().allLessThanEqual(rectangle.getMinimum()) && maximum.allGreaterThanEqual(rectangle.getMaximum());
+	return getMinimum().allLessThanEqual(rectangle.getMinimum()) && getMaximum().allGreaterThanEqual(rectangle.getMaximum());
 }
 
 template<typename T>
-inline bool Rectangle<T>::intersects(const Rectangle<T>& rectangle) const
+	requires (std::floating_point<T> || std::integral<T>)
+inline bool Rectangle<T>::intersects(const Rectangle<T>& rectangle) const noexcept
 {
-	return getMinimum().allLessThan(rectangle.getMaximum()) && maximum.allGreaterThan(rectangle.getMinimum());
+	return getMinimum().allLessThan(rectangle.getMaximum()) && getMaximum().allGreaterThan(rectangle.getMinimum());
 }
 
 } // namespace templates
@@ -233,9 +252,6 @@ using RectangleDResult = templates::Rectangle<double>::ConstResult;
 } // namespace imaging
 
 namespace std {
-
-template<typename T>
-struct hash;
 
 template<typename T>
 struct hash<::imaging::templates::Rectangle<T>>

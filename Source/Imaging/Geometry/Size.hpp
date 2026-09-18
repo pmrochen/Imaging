@@ -50,8 +50,8 @@ struct Size
 	using ConstResult = const Size&;
 	using PairType = std::pair<T, T>;
 	using TupleType = std::tuple<T, T>;
-	template<Arithmetic U> OtherPairType = std::pair<U, U>;
-	template<Arithmetic U> OtherTupleType = std::tuple<U, U>;
+	template<Arithmetic U> using OtherPairType = std::pair<U, U>;
+	template<Arithmetic U> using OtherTupleType = std::tuple<U, U>;
 
 	static constexpr int NUM_COMPONENTS = 2;
 
@@ -108,7 +108,9 @@ struct Size
 	T height;
 };
 
-template<typename T> const Size<T> Size<T>::ZERO{};
+template<typename T> 
+	requires (std::floating_point<T> || std::integral<T>)
+const Size<T> Size<T>::ZERO{};
 
 template<typename T>
 	requires (std::floating_point<T> || std::integral<T>)
@@ -163,14 +165,15 @@ template<typename T>
 	requires (std::floating_point<T> || std::integral<T>)
 inline Size<T> operator/(const Size<T>& size, T f) noexcept
 {
-	if constexpr (std::is_floating_point_size<T>)
+	if constexpr (std::is_floating_point_v<T>)
 		return operator*(size, T(1)/f);
 	else
 		return Size<T>(size.width/f, size.height/f);
 }
 
 template<typename T>
-inline Size<T>& Size<T>::operator/=(T f)
+	requires (std::floating_point<T> || std::integral<T>)
+inline Size<T>& Size<T>::operator/=(T f) noexcept
 {
 	if constexpr (std::is_floating_point_v<T>)
 	{
@@ -200,8 +203,9 @@ inline std::basic_ostream<C, T>& operator<<(std::basic_ostream<C, T>& s, const S
 }
 
 template<typename T>
+	requires (std::floating_point<T> || std::integral<T>)
 template<std::size_t I>
-inline T& Size<T>::get()
+inline T& Size<T>::get() noexcept
 {
 	if constexpr (I == 0)
 		return width;
@@ -211,8 +215,9 @@ inline T& Size<T>::get()
 }
 
 template<typename T>
+	requires (std::floating_point<T> || std::integral<T>)
 template<std::size_t I>
-inline const T& Size<T>::get() const
+inline const T& Size<T>::get() const noexcept
 {
 	if constexpr (I == 0)
 		return width;
@@ -222,30 +227,35 @@ inline const T& Size<T>::get() const
 }
 
 template<typename T>
+	requires (std::floating_point<T> || std::integral<T>)
 inline bool Size<T>::isApproxZero() const noexcept requires std::floating_point<T>
 { 
 	return (std::fabs(width) < Constants<T>::TOLERANCE) && (std::fabs(height) < Constants<T>::TOLERANCE);
 }
 
 template<typename T>
+	requires (std::floating_point<T> || std::integral<T>)
 inline bool Size<T>::approxEquals(const Size<T>& size) const noexcept requires std::floating_point<T>
 { 
 	return (std::fabs(size.width - width) < Constants<T>::TOLERANCE) && (std::fabs(size.height - height) < Constants<T>::TOLERANCE);
 }
 
 template<typename T>
+	requires (std::floating_point<T> || std::integral<T>)
 inline bool Size<T>::approxEquals(const Size<T>& size, T tolerance) const noexcept requires std::floating_point<T>
 { 
 	return (std::fabs(size.width - width) < tolerance) && (std::fabs(size.height - height) < tolerance);
 }
 
 template<typename T>
+	requires (std::floating_point<T> || std::integral<T>)
 inline bool Size<T>::isFinite() const noexcept requires std::floating_point<T> 
 { 
 	return std::isfinite(width) && std::isfinite(height); 
 }
 
 template<typename T>
+	requires (std::floating_point<T> || std::integral<T>)
 inline Size<T>& Size<T>::setMinimum(const Size<T>& size1, const Size<T>& size2)
 {
 	width = std::min(size1.width, size2.width);
@@ -254,6 +264,7 @@ inline Size<T>& Size<T>::setMinimum(const Size<T>& size1, const Size<T>& size2)
 }
 
 template<typename T>
+	requires (std::floating_point<T> || std::integral<T>)
 inline Size<T>& Size<T>::setMaximum(const Size<T>& size1, const Size<T>& size2)
 {
 	width = std::max(size1.width, size2.width);
@@ -262,8 +273,9 @@ inline Size<T>& Size<T>::setMaximum(const Size<T>& size1, const Size<T>& size2)
 }
 
 template<typename T>
+	requires (std::floating_point<T> || std::integral<T>)
 template<std::floating_point U>
-inline U Size<T>::getAspectRatio() const
+inline U Size<T>::getAspectRatio() const noexcept
 {
 	return (height != T(0)) ? U((double)width/(double)height) : U();
 }
@@ -352,24 +364,15 @@ using SizeDResult = templates::Size<double>::ConstResult;
 namespace std {
 
 template<size_t I, typename T>
-struct tuple_element;
-
-template<size_t I, typename T>
 struct tuple_element<I, ::imaging::templates::Size<T>>
 {
 	using type = T;
 };
 
 template<typename T>
-struct tuple_size;
-
-template<typename T>
-struct tuple_size<::imaging::templates::Size<T>> : integral_constant<size_t, 2>
+struct tuple_size<::imaging::templates::Size<T>> : public integral_constant<size_t, 2>
 {
 };
-
-template<typename T>
-struct hash;
 
 template<typename T>
 struct hash<::imaging::templates::Size<T>>

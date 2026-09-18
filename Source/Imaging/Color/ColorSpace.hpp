@@ -56,7 +56,7 @@ inline T branchlessIntMax(T x) noexcept
     else
     {
         if constexpr (std::is_signed_v<T>)
-            return x - ((x - y) & ((x - y) >> std::numeric_limits<T>::digits));
+            return x - ((x - Y) & ((x - Y) >> std::numeric_limits<T>::digits));
         else
             static_assert(false);
     }
@@ -88,7 +88,7 @@ inline T saturate(U x)
         else if constexpr (std::is_floating_point_v<T> && std::is_unsigned_v<U>)
             return T(x)/T(std::numeric_limits<U>::max());
         else if constexpr (std::is_floating_point_v<T>)
-            return T(detail::branchlessIntMax<0>(x)/T(std::numeric_limits<U>::max());
+            return T(detail::branchlessIntMax<0>(x)/T(std::numeric_limits<U>::max()));
     }
     else if constexpr (std::is_floating_point_v<U>)
     {
@@ -116,7 +116,7 @@ inline T saturate(U x)
         else if constexpr (std::is_floating_point_v<T> && std::is_unsigned_v<U>)
             return T(x)/T(MAX);
         else if constexpr (std::is_floating_point_v<T>)
-            return T(detail::branchlessIntMax<0>(x)/T(MAX);
+            return T(detail::branchlessIntMax<0>(x)/T(MAX));
     }
     else if constexpr (std::is_floating_point_v<U>)
     {
@@ -205,29 +205,44 @@ inline T hsvToRgb(U h, U s, U v)
 template<typename T, typename U>
 inline T rgbToXyz(U r, U g, U b)
 {
-    return { U(0.412453)*r + U(0.357580)*g + U(0.180423)*b,
-	    U(0.212671)*r + U(0.715160)*g + U(0.072169)*b,
-	    U(0.019334)*r + U(0.119193)*g + U(0.950227)*b };
+#if SIMD_HAS_FLOAT4
+	if constexpr (std::is_same_v<U, float>)
+	{
+		static const simd::float4 row0 = simd::set3(0.412453f, 0.212671f, 0.019334f);
+		static const simd::float4 row1 = simd::set3(0.357580f, 0.715160f, 0.119193f);
+		static const simd::float4 row2 = simd::set3(0.180423f, 0.072169f, 0.950227f);
+		return T(row0*r + row1*g + row2*b);
+	}
+	else
+#endif /* SIMD_HAS_FLOAT4 */
+	{
+		return { U(0.412453)*r + U(0.357580)*g + U(0.180423)*b,
+			U(0.212671)*r + U(0.715160)*g + U(0.072169)*b,
+			U(0.019334)*r + U(0.119193)*g + U(0.950227)*b };
+	}
 }
 
 template<typename T, typename U>
 inline T xyzToRgb(U x, U y, U z)
 {
-    return { U(3.240479)*x - U(1.537150)*y - U(0.498535)*z,
-	    U(-0.969256)*x + U(1.875992)*y + U(0.041556)*z,
-	    U(0.055648)*x - U(0.204043)*y + U(1.057311)*z };
+#if SIMD_HAS_FLOAT4
+	if constexpr (std::is_same_v<U, float>)
+	{
+		static const simd::float4 row0 = simd::set3(3.240479f, -0.969256f, 0.055648f);
+		static const simd::float4 row1 = simd::set3(-1.537150f, 1.875992f, -0.204043f);
+		static const simd::float4 row2 = simd::set3(-0.498535f, 0.041556f, 1.057311f);
+		return T(row0*x + row1*y + row2*z);
+	}
+	else
+#endif /* SIMD_HAS_FLOAT4 */
+	{
+		return { U(3.240479)*x - U(1.537150)*y - U(0.498535)*z,
+			U(-0.969256)*x + U(1.875992)*y + U(0.041556)*z,
+			U(0.055648)*x - U(0.204043)*y + U(1.057311)*z };
+	}
 }
 
 #if SIMD_HAS_FLOAT4
-
-template<typename T>
-inline T rgbToXyz<T, float>(float r, float g, float b)
-{
-    static const simd::float4 row0 = simd::set3(0.412453f, 0.212671f, 0.019334f);
-    static const simd::float4 row1 = simd::set3(0.357580f, 0.715160f, 0.119193f);
-    static const simd::float4 row2 = simd::set3(0.180423f, 0.072169f, 0.950227f);
-    return T(row0*r + row1*g + row2*b);
-}
 
 template<typename T>
 inline T rgbToXyz(simd::float4 rgb)
@@ -236,15 +251,6 @@ inline T rgbToXyz(simd::float4 rgb)
     static const simd::float4 row1 = simd::set3(0.357580f, 0.715160f, 0.119193f);
     static const simd::float4 row2 = simd::set3(0.180423f, 0.072169f, 0.950227f);
     return T(row0*simd::xxxx(rgb) + row1*simd::yyyy(rgb) + row2*simd::zzzz(rgb));
-}
-
-template<typename T>
-inline T xyzToRgb<T, float>(float x, float y, float z)
-{
-    static const simd::float4 row0 = simd::set3(3.240479f, -0.969256f, 0.055648f);
-    static const simd::float4 row1 = simd::set3(-1.537150f, 1.875992f, -0.204043f);
-    static const simd::float4 row2 = simd::set3(-0.498535f, 0.041556f, 1.057311f);
-    return T(row0*x + row1*y + row2*z);
 }
 
 template<typename T>

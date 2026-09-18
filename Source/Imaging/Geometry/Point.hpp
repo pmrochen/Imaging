@@ -29,8 +29,8 @@ struct Point
 	using ConstResult = const Point&;
 	using PairType = std::pair<T, T>;
 	using TupleType = std::tuple<T, T>;
-	template<Arithmetic U> OtherPairType = std::pair<U, U>;
-	template<Arithmetic U> OtherTupleType = std::tuple<U, U>;
+	template<Arithmetic U> using OtherPairType = std::pair<U, U>;
+	template<Arithmetic U> using OtherTupleType = std::tuple<U, U>;
 
 	static constexpr int NUM_COMPONENTS = 2;
 
@@ -48,11 +48,11 @@ struct Point
 
 	Point operator+() const noexcept { return *this; }
 	Point operator-() const noexcept { return Point(-x, -y); }
-	Point& operator+=(const Size& size) noexcept { x += size.width; y += size.height; return *this; }
-	Point& operator-=(const Size& size) noexcept { x -= size.width; y -= size.height; return *this; }
-	Point& operator*=(const Size& size) noexcept { x *= size.width; y *= size.height; return *this; }
+	Point& operator+=(const Size<T>& size) noexcept { x += size.width; y += size.height; return *this; }
+	Point& operator-=(const Size<T>& size) noexcept { x -= size.width; y -= size.height; return *this; }
+	Point& operator*=(const Size<T>& size) noexcept { x *= size.width; y *= size.height; return *this; }
 	Point& operator*=(T f) noexcept { x *= f; y *= f; return *this; }
-	Point& operator/=(const Size& size) noexcept { x /= size.width; y /= size.height; return *this; }
+	Point& operator/=(const Size<T>& size) noexcept { x /= size.width; y /= size.height; return *this; }
 	Point& operator/=(T f) noexcept;
 	bool operator==(const Point& point) const noexcept { return (x == point.x) && (y == point.y); }
 	bool operator!=(const Point& point) const noexcept { return !(*this == point); }
@@ -86,7 +86,9 @@ struct Point
 	T y;
 };
 
-template<typename T> const Point<T> Point<T>::ZERO{};
+template<typename T> 
+	requires (std::floating_point<T> || std::integral<T>)
+const Point<T> Point<T>::ZERO{};
 
 template<typename T>
 	requires (std::floating_point<T> || std::integral<T>)
@@ -190,7 +192,8 @@ inline Point<T> operator/(const Point<T>& point, T f) noexcept
 }
 
 template<typename T>
-inline Point<T>& Point<T>::operator/=(T f) 
+	requires (std::floating_point<T> || std::integral<T>)
+inline Point<T>& Point<T>::operator/=(T f) noexcept
 { 
 	if constexpr (std::is_floating_point_v<T>)
 	{
@@ -220,8 +223,9 @@ inline std::basic_ostream<C, T>& operator<<(std::basic_ostream<C, T>& s, const P
 }
 
 template<typename T>
+	requires (std::floating_point<T> || std::integral<T>)
 template<std::size_t I>
-inline T& Point<T>::get()
+inline T& Point<T>::get() noexcept
 {
 	if constexpr (I == 0)
 		return x;
@@ -231,8 +235,9 @@ inline T& Point<T>::get()
 }
 
 template<typename T>
+	requires (std::floating_point<T> || std::integral<T>)
 template<std::size_t I>
-inline const T& Point<T>::get() const
+inline const T& Point<T>::get() const noexcept
 {
 	if constexpr (I == 0)
 		return x;
@@ -242,30 +247,35 @@ inline const T& Point<T>::get() const
 }
 
 template<typename T>
+	requires (std::floating_point<T> || std::integral<T>)
 inline bool Point<T>::isApproxZero() const noexcept requires std::floating_point<T>
 { 
 	return (std::fabs(x) < Constants<T>::TOLERANCE) && (std::fabs(y) < Constants<T>::TOLERANCE);
 }
 
 template<typename T>
+	requires (std::floating_point<T> || std::integral<T>)
 inline bool Point<T>::approxEquals(const Point<T>& point) const noexcept requires std::floating_point<T>
 { 
 	return (std::fabs(point.x - x) < Constants<T>::TOLERANCE) && (std::fabs(point.y - y) < Constants<T>::TOLERANCE);
 }
 
 template<typename T>
+	requires (std::floating_point<T> || std::integral<T>)
 inline bool Point<T>::approxEquals(const Point<T>& point, T tolerance) const noexcept requires std::floating_point<T>
 { 
 	return (std::fabs(point.x - x) < tolerance) && (std::fabs(point.y - y) < tolerance);
 }
 
 template<typename T>
+	requires (std::floating_point<T> || std::integral<T>)
 inline bool Point<T>::isFinite() const noexcept requires std::floating_point<T> 
 { 
 	return std::isfinite(x) && std::isfinite(y); 
 }
 
 template<typename T>
+	requires (std::floating_point<T> || std::integral<T>)
 inline Point<T>& Point<T>::setMinimum(const Point<T>& point1, const Point<T>& point2)
 {
 	x = std::min(point1.x, point2.x);
@@ -274,6 +284,7 @@ inline Point<T>& Point<T>::setMinimum(const Point<T>& point1, const Point<T>& po
 }
 
 template<typename T>
+	requires (std::floating_point<T> || std::integral<T>)
 inline Point<T>& Point<T>::setMaximum(const Point<T>& point1, const Point<T>& point2)
 {
 	x = std::max(point1.x, point2.x);
@@ -365,24 +376,15 @@ using PointDResult = templates::Point<double>::ConstResult;
 namespace std {
 
 template<size_t I, typename T>
-struct tuple_element;
-
-template<size_t I, typename T>
 struct tuple_element<I, ::imaging::templates::Point<T>>
 {
 	using type = T;
 };
 
 template<typename T>
-struct tuple_size;
-
-template<typename T>
-struct tuple_size<::imaging::templates::Point<T>> : integral_constant<size_t, 2>
+struct tuple_size<::imaging::templates::Point<T>> : public integral_constant<size_t, 2>
 {
 };
-
-template<typename T>
-struct hash;
 
 template<typename T>
 struct hash<::imaging::templates::Point<T>>
