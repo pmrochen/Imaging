@@ -341,9 +341,9 @@ struct alignas(16) Color3<float>
 	bool anyGreaterThan(const Color3& c) const noexcept { return simd::any3(simd::greaterThan(rgb, c)); }
 	bool anyGreaterThanEqual(const Color3& c) const noexcept { return simd::any3(simd::greaterThanEqual(rgb, c)); }
 	bool isFinite() const noexcept { return simd::all3(simd::isFinite(rgb)); }
-	float getLuminance() const noexcept { return simd::toFloat(simd::dot3(rgb, LUMINANCE)); }
-	float getMinComponent() const noexcept { return simd::toFloat(simd::hMin3(rgb)); }
-	float getMaxComponent() const noexcept { return simd::toFloat(simd::hMax3(rgb)); }
+	float getLuminance() const noexcept { return simd::extract(simd::dot3(rgb, LUMINANCE)); }
+	float getMinComponent() const noexcept { return simd::extract(simd::hMin3(rgb)); }
+	float getMaxComponent() const noexcept { return simd::extract(simd::hMax3(rgb)); }
 	Color3& setZero() noexcept { rgb = simd::zero<simd::float4>(); return *this; }
 #if IMAGING_SIMD_EXPAND_LAST
 	Color3& set(float r, float g, float b) noexcept { rgb = simd::set4(r, g, b, b); return *this; }
@@ -949,14 +949,14 @@ template<>
 inline float luminance(float r, float g, float b) noexcept
 {
 	//static const simd::float4 coeff = simd::set4(0.2126f, 0.7152f, 0.0722f, 0.f);
-	return simd::toFloat(simd::dot3(simd::set3(r, g, b), Color3<float>::LUMINANCE/*coeff*/));
+	return simd::extract(simd::dot3(simd::set3(r, g, b), Color3<float>::LUMINANCE/*coeff*/));
 }
 
 template<>
 inline float luminance(const Color3<float>& c) noexcept
 {
 	//static const simd::float4 coeff = simd::set4(0.2126f, 0.7152f, 0.0722f, 0.f);
-	return simd::toFloat(simd::dot3(c, Color3<float>::LUMINANCE/*coeff*/));
+	return simd::extract(simd::dot3(c, Color3<float>::LUMINANCE/*coeff*/));
 }
 
 template<>
