@@ -280,7 +280,7 @@
       "inherits": "emscripten-base",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Debug",
-        "IMAGING_ENABLE_AVX2": "ON"
+        "IMAGING_ENABLE_SSE4": "ON"
       }
     },
     {
