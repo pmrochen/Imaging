@@ -242,7 +242,7 @@ struct alignas(16) Color3<float>
 
 	static constexpr int NUM_COMPONENTS = 3;
 
-	/*constexpr*/ Color3() noexcept : rgb(simd::zero<simd::float4>()) {}
+	/*constexpr*/ Color3() noexcept : rgb(simd::zero4<float>()) {}
 	explicit Color3(Uninitialized) noexcept {}
 #if IMAGING_SIMD_EXPAND_LAST
 	/*constexpr*/ explicit Color3(float scalar) noexcept : rgb(simd::set4(scalar)) {}
@@ -282,10 +282,10 @@ struct alignas(16) Color3<float>
 #else
 	Color3 operator-() const noexcept { return Color3(simd::neg3(rgb)); }
 #endif
-	Color3& operator+=(const Color3& c) noexcept { rgb = simd::add4(rgb, c); return *this; }
-	Color3& operator-=(const Color3& c) noexcept { rgb = simd::sub4(rgb, c); return *this; }
-	Color3& operator*=(const Color3& c) noexcept { rgb = simd::mul4(rgb, c); return *this; }
-	Color3& operator*=(float f) noexcept { rgb = simd::mul4(rgb, simd::set4(f)); return *this; }
+	Color3& operator+=(const Color3& c) noexcept { rgb = simd::add(rgb, c); return *this; }
+	Color3& operator-=(const Color3& c) noexcept { rgb = simd::sub(rgb, c); return *this; }
+	Color3& operator*=(const Color3& c) noexcept { rgb = simd::mul(rgb, c); return *this; }
+	Color3& operator*=(float f) noexcept { rgb = simd::mul(rgb, simd::set4(f)); return *this; }
 #if IMAGING_SIMD_EXPAND_LAST
 	Color3& operator/=(const Color3& c) noexcept { rgb = simd::div4(rgb, c); return *this; }
 #else
@@ -328,10 +328,10 @@ struct alignas(16) Color3<float>
 	template<typename U> static Color3 fromXyz(U c) { return xyzToRgb<Color3>((simd::float4)c/*c.get<simd::float4>()*/); }
 	template<typename U> U toXyz() const { return rgbToXyz<U>(rgb); }
 
-	bool isZero() const noexcept { return simd::all3(simd::equal(rgb, simd::zero<simd::float4>())); }
-	bool isApproxZero() const noexcept { return simd::all3(simd::lessThan(simd::abs4(rgb), TOLERANCE)); }
-	bool approxEquals(const Color3& c) const noexcept { return simd::all3(simd::lessThan(simd::abs4(simd::sub4(rgb, c)), TOLERANCE)); }
-	bool approxEquals(const Color3& c, float tolerance) const noexcept { return simd::all3(simd::lessThan(simd::abs4(simd::sub4(rgb, c)), simd::set4(tolerance))); }
+	bool isZero() const noexcept { return simd::all3(simd::equal(rgb, simd::zero4<float>())); }
+	bool isApproxZero() const noexcept { return simd::all3(simd::lessThan(simd::abs(rgb), TOLERANCE)); }
+	bool approxEquals(const Color3& c) const noexcept { return simd::all3(simd::lessThan(simd::abs(simd::sub(rgb, c)), TOLERANCE)); }
+	bool approxEquals(const Color3& c, float tolerance) const noexcept { return simd::all3(simd::lessThan(simd::abs(simd::sub(rgb, c)), simd::set4(tolerance))); }
 	bool allLessThan(const Color3& c) const noexcept { return simd::all3(simd::lessThan(rgb, c)); }
 	bool allLessThanEqual(const Color3& c) const noexcept { return simd::all3(simd::lessThanEqual(rgb, c)); }
 	bool allGreaterThan(const Color3& c) const noexcept { return simd::all3(simd::greaterThan(rgb, c)); }
@@ -344,15 +344,15 @@ struct alignas(16) Color3<float>
 	float getLuminance() const noexcept { return simd::extract(simd::dot3(rgb, LUMINANCE)); }
 	float getMinComponent() const noexcept { return simd::extract(simd::hMin3(rgb)); }
 	float getMaxComponent() const noexcept { return simd::extract(simd::hMax3(rgb)); }
-	Color3& setZero() noexcept { rgb = simd::zero<simd::float4>(); return *this; }
+	Color3& setZero() noexcept { rgb = simd::zero4<float>(); return *this; }
 #if IMAGING_SIMD_EXPAND_LAST
 	Color3& set(float r, float g, float b) noexcept { rgb = simd::set4(r, g, b, b); return *this; }
 #else
 	Color3& set(float r, float g, float b) noexcept { rgb = simd::set3(r, g, b); return *this; }
 #endif
-	Color3& setMinimum(const Color3& c1, const Color3& c2) noexcept { rgb = simd::min4(c1, c2); return *this; }
-	Color3& setMaximum(const Color3& c1, const Color3& c2) noexcept { rgb = simd::max4(c1, c2); return *this; }
-	Color3& saturate() noexcept { rgb = simd::min4(simd::max4(rgb, simd::zero<simd::float4>()), ONE); return *this; }
+	Color3& setMinimum(const Color3& c1, const Color3& c2) noexcept { rgb = simd::min(c1, c2); return *this; }
+	Color3& setMaximum(const Color3& c1, const Color3& c2) noexcept { rgb = simd::max(c1, c2); return *this; }
+	Color3& saturate() noexcept { rgb = simd::clamp(rgb, simd::zero4<float>(), ONE); return *this; }
 	Color3& makeLinear() noexcept { set(::imaging::makeLinear(r), ::imaging::makeLinear(g), ::imaging::makeLinear(b)); return *this; }
 	Color3& makeSrgb() noexcept { set(::imaging::makeSrgb(r), ::imaging::makeSrgb(g), ::imaging::makeSrgb(b)); return *this; }
 
@@ -638,31 +638,31 @@ inline Color3<T>& Color3<T>::setMaximum(const Color3<T>& c1, const Color3<T>& c2
 template<>
 inline Color3<float> operator+(const Color3<float>& c1, const Color3<float>& c2) noexcept 
 { 
-	return Color3<float>(simd::add4(c1, c2)); 
+	return Color3<float>(simd::add(c1, c2)); 
 }
 
 template<>
 inline Color3<float> operator-(const Color3<float>& c1, const Color3<float>& c2) noexcept 
 { 
-	return Color3<float>(simd::sub4(c1, c2)); 
+	return Color3<float>(simd::sub(c1, c2)); 
 }
 
 template<>
 inline Color3<float> operator*(const Color3<float>& c1, const Color3<float>& c2) noexcept 
 { 
-	return Color3<float>(simd::mul4(c1, c2)); 
+	return Color3<float>(simd::mul(c1, c2)); 
 }
 
 template<>
 inline Color3<float> operator*(float f, const Color3<float>& c) noexcept 
 { 
-	return Color3<float>(simd::mul4(simd::set4(f), c)); 
+	return Color3<float>(simd::mul(simd::set4(f), c)); 
 }
 
 template<>
 inline Color3<float> operator*(const Color3<float>& c, float f) noexcept 
 { 
-	return Color3<float>(simd::mul4(c, simd::set4(f))); 
+	return Color3<float>(simd::mul(c, simd::set4(f))); 
 }
 
 template<>
@@ -736,7 +736,7 @@ template<typename U>
 inline Color3<float> Color3<float>::fromPackedRgb(U c) noexcept
 {
 	static const simd::float4 s = simd::set4(1.f/(float)pixel::PackedRgb<U>::R_MAX);
-	return Color3<float>(simd::mul4(unpackRgb<Color3<float>>(c), s));
+	return Color3<float>(simd::mul(unpackRgb<Color3<float>>(c), s));
 }
 
 template<typename U> 
@@ -744,7 +744,7 @@ inline U Color3<float>::toPackedRgb() const noexcept
 {
 	static const simd::float4 s = simd::set4((float)pixel::PackedRgb<U>::R_MAX);
 	//static const simd::float4 half = simd::set4(0.5f);
-	Color3<float> c(simd::mulAdd4(simd::min4(simd::max4(rgb, simd::zero<simd::float4>()), Color3<float>::ONE),
+	Color3<float> c(simd::mulAdd(simd::clamp(rgb, simd::zero4<float>(), Color3<float>::ONE),
 		s, /*half*/Color3<float>::HALF));
 	return makePackedRgb<U>(c.r, c.g, c.b);
 }
@@ -753,7 +753,7 @@ template<typename U>
 inline Color3<float> Color3<float>::fromPackedBgr(U c) noexcept
 {
 	static const simd::float4 s = simd::set4(1.f/(float)pixel::PackedBgr<U>::R_MAX);
-	return Color3<float>(simd::mul4(unpackBgr<Color3<float>>(c), s));
+	return Color3<float>(simd::mul(unpackBgr<Color3<float>>(c), s));
 }
 
 template<typename U> 
@@ -761,7 +761,7 @@ inline U Color3<float>::toPackedBgr() const noexcept
 {
 	static const simd::float4 s = simd::set4((float)pixel::PackedBgr<U>::R_MAX);
 	//static const simd::float4 half = simd::set4(0.5f);
-	Color3<float> c(simd::mulAdd4(simd::min4(simd::max4(rgb, simd::zero<simd::float4>()), Color3<float>::ONE),
+	Color3<float> c(simd::mulAdd(simd::clamp(rgb, simd::zero4<float>(), Color3<float>::ONE),
 		s, /*half*/Color3<float>::HALF));
 	return makePackedBgr<U>(c.r, c.g, c.b);
 }
@@ -962,32 +962,32 @@ inline float luminance(const Color3<float>& c) noexcept
 template<>
 inline Color3<float> min(const Color3<float>& c1, const Color3<float>& c2)
 {
-	return Color3<float>(simd::min4(c1, c2));
+	return Color3<float>(simd::min(c1, c2));
 }
 
 template<>
 inline Color3<float> max(const Color3<float>& c1, const Color3<float>& c2)
 {
-	return Color3<float>(simd::max4(c1, c2));
+	return Color3<float>(simd::max(c1, c2));
 }
 
 template<>
 inline Color3<float> clamp(const Color3<float>& c, const Color3<float>& low, const Color3<float>& high)
 {
-	return Color3<float>(simd::min4(simd::max4(c, low), high));
+	return Color3<float>(simd::clamp(c, low, high));
 }
 
 template<>
 inline Color3<float> saturate(const Color3<float>& c)
 {
 	//static const simd::float4 one = simd::set4(1.f);
-	return Color3<float>(simd::min4(simd::max4(c, simd::zero<simd::float4>()), Color3<float>::ONE/*one*/));
+	return Color3<float>(simd::clamp(c, simd::zero4<float>(), Color3<float>::ONE/*one*/));
 }
 
 template<>
 inline Color3<float> lerp(const Color3<float>& c1, const Color3<float>& c2, float t) noexcept
 {
-	return Color3<float>(simd::mulAdd4(simd::set4(t), simd::sub4(c2, c1), c1));
+	return Color3<float>(simd::mulAdd(simd::set4(t), simd::sub(c2, c1), c1));
 }
 
 #endif /* SIMD_HAS_FLOAT4 */
