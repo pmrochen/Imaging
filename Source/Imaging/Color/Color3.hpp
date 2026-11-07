@@ -20,11 +20,12 @@
 #include <Simd/Intrinsics.hpp>
 #include <Simd/Functional.hpp>
 #endif
+#include "../Concepts.hpp"
+#include "../Constants.hpp"
 #include "../Tuples/Tuple3.hpp"
 #include "ColorSpace.hpp"
 #include "../Pixel/ChannelOrder.hpp"
 #include "../Pixel/PixelFormat.hpp"
-#include "../Geometry/Size.hpp" // for Uninitialized, Arithmetic, Constants
 
 namespace imaging {
 namespace templates {

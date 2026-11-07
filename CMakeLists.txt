@@ -268,6 +268,8 @@ target_sources(${IMAGING_LIB_NAME}
 			Source/Imaging/Tuples/Tuple2.hpp
 			Source/Imaging/Tuples/Tuple3.hpp
 			Source/Imaging/Tuples/Tuple4.hpp
+			Source/Imaging/Concepts.hpp
+			Source/Imaging/Constants.hpp
 			Source/Imaging/Imaging.hpp
 )
 

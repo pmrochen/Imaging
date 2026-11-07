@@ -5,6 +5,9 @@
 
 #pragma once
 
+#include "Concepts.hpp"
+#include "Constants.hpp"
+
 #include "Color/ColorMask.hpp"
 #include "Color/ColorSpace.hpp"
 #include "Pixel/ChannelOrder.hpp"

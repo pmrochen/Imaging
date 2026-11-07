@@ -15,30 +15,10 @@
 #include <tuple>
 #include <cstddef>
 #include <cmath>
+#include "../Concepts.hpp"
+#include "../Constants.hpp"
 
 namespace imaging {
-
-struct Uninitialized {};
-constexpr Uninitialized UNINITIALIZED{};
-
-template<typename T>
-concept Arithmetic = (std::floating_point<T> || std::integral<T>); // #TODO Move to Concepts.hpp
-
-template<typename T>
-struct Constants;
-
-template<>
-struct Constants<float>
-{
-	static constexpr float TOLERANCE = 1e-6f;
-};
-
-template<>
-struct Constants<double>
-{
-	static constexpr double TOLERANCE = 1e-15;
-};
-
 namespace templates {
 
 template<typename T>

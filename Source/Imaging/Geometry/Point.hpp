@@ -15,7 +15,8 @@
 #include <tuple>
 #include <cstddef>
 #include <cmath>
-#include "Size.hpp" // for Uninitialized, Arithmetic, Constants
+#include "../Concepts.hpp"
+#include "../Constants.hpp"
 
 namespace imaging {
 namespace templates {
