@@ -82,8 +82,8 @@ struct Color4<T>
 	template<typename A> void load(A& ar) { ar(r, g, b, a); }
 	template<typename A> void save(A& ar) const { ar(r, g, b, a); }
 
-	template<std::size_t I> T& get() noexcept;
-	template<std::size_t I> const T& get() const noexcept;
+	template<std::size_t I> requires (I < 4) T& get() noexcept;
+	template<std::size_t I> requires (I < 4) const T& get() const noexcept;
 
 	template<typename U> static Color4 fromPackedRgba(U c) noexcept;
 	std::uint32_t toPackedRgba() const noexcept { return toPackedRgba<std::uint32_t>(); }
@@ -201,8 +201,8 @@ struct Color4<T>
 	template<typename A> void load(A& ar) { ar(r, g, b, a); }
 	template<typename A> void save(A& ar) const { ar(r, g, b, a); }
 
-	template<std::size_t I> T& get() noexcept;
-	template<std::size_t I> const T& get() const noexcept;
+	template<std::size_t I> requires (I < 4) T& get() noexcept;
+	template<std::size_t I> requires (I < 4) const T& get() const noexcept;
 
 	// #TODO from/toPacked
 
@@ -286,8 +286,8 @@ struct alignas(16) Color4<float>
 	template<typename A> void load(A& ar);
 	template<typename A> void save(A& ar) const { ar(r, g, b, a); }
 
-	template<std::size_t I> float& get() noexcept;
-	template<std::size_t I> const float& get() const noexcept;
+	template<std::size_t I> requires (I < 4) float& get() noexcept;
+	template<std::size_t I> requires (I < 4) const float& get() const noexcept;
 	template<typename U> U& get() noexcept;				// intentionally undefined
 	template<typename U> const U& get() const noexcept;	// intentionally undefined
 	template<> simd::float4& get() noexcept { return rgba; }
@@ -448,6 +448,7 @@ inline std::basic_ostream<C, T>& operator<<(std::basic_ostream<C, T>& s, const C
 
 template<std::floating_point T>
 template<std::size_t I>
+	requires (I < 4) 
 inline T& Color4<T>::get() noexcept
 {
 	if constexpr (I == 0)
@@ -456,13 +457,13 @@ inline T& Color4<T>::get() noexcept
 		return g;
 	else if constexpr (I == 2)
 		return b;
-	else if constexpr (I == 3)
+	else //if constexpr (I == 3)
 		return a;
-	static_assert(false);
 }
 
 template<std::floating_point T>
 template<std::size_t I>
+	requires (I < 4) 
 inline const T& Color4<T>::get() const noexcept
 {
 	if constexpr (I == 0)
@@ -471,9 +472,8 @@ inline const T& Color4<T>::get() const noexcept
 		return g;
 	else if constexpr (I == 2)
 		return b;
-	else if constexpr (I == 3)
+	else //if constexpr (I == 3)
 		return a;
-	static_assert(false);
 }
 
 template<std::floating_point T>
@@ -585,6 +585,7 @@ inline Color4<T>& Color4<T>::makeSrgb() noexcept
 
 template<std::integral T>
 template<std::size_t I>
+	requires (I < 4) 
 inline T& Color4<T>::get() noexcept
 {
 	if constexpr (I == 0)
@@ -593,13 +594,13 @@ inline T& Color4<T>::get() noexcept
 		return g;
 	else if constexpr (I == 2)
 		return b;
-	else if constexpr (I == 3)
+	else //if constexpr (I == 3)
 		return a;
-	static_assert(false);
 }
 
 template<std::integral T>
 template<std::size_t I>
+	requires (I < 4) 
 inline const T& Color4<T>::get() const noexcept
 {
 	if constexpr (I == 0)
@@ -608,9 +609,8 @@ inline const T& Color4<T>::get() const noexcept
 		return g;
 	else if constexpr (I == 2)
 		return b;
-	else if constexpr (I == 3)
+	else //if constexpr (I == 3)
 		return a;
-	static_assert(false);
 }
 
 template<std::integral T>
@@ -701,6 +701,7 @@ inline void Color4<float>::load(A& ar)
 }
 
 template<std::size_t I>
+	requires (I < 4) 
 inline float& Color4<float>::get() noexcept
 {
 	if constexpr (I == 0)
@@ -709,12 +710,12 @@ inline float& Color4<float>::get() noexcept
 		return g;
 	else if constexpr (I == 2)
 		return b;
-	else if constexpr (I == 3)
+	else //if constexpr (I == 3)
 		return a;
-	static_assert(false);
 }
 
 template<std::size_t I>
+	requires (I < 4) 
 inline const float& Color4<float>::get() const noexcept
 {
 	if constexpr (I == 0)
@@ -723,9 +724,8 @@ inline const float& Color4<float>::get() const noexcept
 		return g;
 	else if constexpr (I == 2)
 		return b;
-	else if constexpr (I == 3)
+	else //if constexpr (I == 3)
 		return a;
-	static_assert(false);
 }
 
 template<typename U> 
@@ -765,7 +765,7 @@ inline U Color4<float>::toPackedBgra() const noexcept
 #endif /* SIMD_HAS_FLOAT4 */
 
 template<std::size_t I, typename T>
-	requires (std::floating_point<T> || std::integral<T>)
+	requires ((I < 4) && (std::floating_point<T> || std::integral<T>))
 inline T& get(Color4<T>& c) noexcept
 {
 	if constexpr (I == 0)
@@ -774,13 +774,12 @@ inline T& get(Color4<T>& c) noexcept
 		return c.g;
 	else if constexpr (I == 2)
 		return c.b;
-	else if constexpr (I == 3)
+	else //if constexpr (I == 3)
 		return c.a;
-	static_assert(false);
 }
 
 template<std::size_t I, typename T>
-	requires (std::floating_point<T> || std::integral<T>)
+	requires ((I < 4) && (std::floating_point<T> || std::integral<T>))
 inline const T& get(const Color4<T>& c) noexcept
 {
 	if constexpr (I == 0)
@@ -789,13 +788,12 @@ inline const T& get(const Color4<T>& c) noexcept
 		return c.g;
 	else if constexpr (I == 2)
 		return c.b;
-	else if constexpr (I == 3)
+	else //if constexpr (I == 3)
 		return c.a;
-	static_assert(false);
 }
 
 template<std::size_t I, typename T>
-	requires (std::floating_point<T> || std::integral<T>)
+	requires ((I < 4) && (std::floating_point<T> || std::integral<T>))
 inline T&& get(Color4<T>&& c) noexcept
 {
 	if constexpr (I == 0)
@@ -804,13 +802,12 @@ inline T&& get(Color4<T>&& c) noexcept
 		return c.g;
 	else if constexpr (I == 2)
 		return c.b;
-	else if constexpr (I == 3)
+	else //if constexpr (I == 3)
 		return c.a;
-	static_assert(false);
 }
 
 template<std::size_t I, typename T>
-	requires (std::floating_point<T> || std::integral<T>)
+	requires ((I < 4) && (std::floating_point<T> || std::integral<T>))
 inline const T&& get(const Color4<T>&& c) noexcept
 {
 	if constexpr (I == 0)
@@ -819,9 +816,8 @@ inline const T&& get(const Color4<T>&& c) noexcept
 		return c.g;
 	else if constexpr (I == 2)
 		return c.b;
-	else if constexpr (I == 3)
+	else //if constexpr (I == 3)
 		return c.a;
-	static_assert(false);
 }
 
 //template<typename T, typename U>

@@ -205,25 +205,25 @@ inline std::basic_ostream<C, T>& operator<<(std::basic_ostream<C, T>& s, const S
 template<typename T>
 	requires (std::floating_point<T> || std::integral<T>)
 template<std::size_t I>
+	requires (I < 2)
 inline T& Size<T>::get() noexcept
 {
 	if constexpr (I == 0)
 		return width;
-	else if constexpr (I == 1)
+	else //if constexpr (I == 1)
 		return height;
-	static_assert(false);
 }
 
 template<typename T>
 	requires (std::floating_point<T> || std::integral<T>)
 template<std::size_t I>
+	requires (I < 2)
 inline const T& Size<T>::get() const noexcept
 {
 	if constexpr (I == 0)
 		return width;
-	else if constexpr (I == 1)
+	else //if constexpr (I == 1)
 		return height;
-	static_assert(false);
 }
 
 template<typename T>
@@ -281,47 +281,43 @@ inline U Size<T>::getAspectRatio() const noexcept
 }
 
 template<std::size_t I, typename T>
-	requires (std::floating_point<T> || std::integral<T>)
+	requires ((I < 2) && (std::floating_point<T> || std::integral<T>))
 inline T& get(Size<T>& size) noexcept
 {
 	if constexpr (I == 0)
 		return size.width;
-	else if constexpr (I == 1)
+	else //if constexpr (I == 1)
 		return size.height;
-	static_assert(false);
 }
 
 template<std::size_t I, typename T>
-	requires (std::floating_point<T> || std::integral<T>)
+	requires ((I < 2) && (std::floating_point<T> || std::integral<T>))
 inline const T& get(const Size<T>& size) noexcept
 {
 	if constexpr (I == 0)
 		return size.width;
-	else if constexpr (I == 1)
+	else //if constexpr (I == 1)
 		return size.height;
-	static_assert(false);
 }
 
 template<std::size_t I, typename T>
-	requires (std::floating_point<T> || std::integral<T>)
+	requires ((I < 2) && (std::floating_point<T> || std::integral<T>))
 inline T&& get(Size<T>&& size) noexcept
 {
 	if constexpr (I == 0)
 		return size.width;
-	else if constexpr (I == 1)
+	else //if constexpr (I == 1)
 		return size.height;
-	static_assert(false);
 }
 
 template<std::size_t I, typename T>
-	requires (std::floating_point<T> || std::integral<T>)
+	requires ((I < 2) && (std::floating_point<T> || std::integral<T>))
 inline const T&& get(const Size<T>&& size) noexcept
 {
 	if constexpr (I == 0)
 		return size.width;
-	else if constexpr (I == 1)
+	else //if constexpr (I == 1)
 		return size.height;
-	static_assert(false);
 }
 
 template<typename T>

@@ -6,6 +6,7 @@
 #pragma once
 
 #include <type_traits>
+#include <concepts>
 #include <limits>
 #include <algorithm>
 #include <cmath>
@@ -26,129 +27,122 @@ enum class ColorSpace
 namespace detail {
 
 template<typename T>
+	requires (std::is_signed_v<T>)
 inline T branchlessIntMin(T x, T y) noexcept
 {
-    if constexpr (std::is_signed_v<T>)
-        return y + ((x - y) & ((x - y) >> std::numeric_limits<T>::digits));
-    else
-        static_assert(false);
+	//if constexpr (std::is_signed_v<T>)
+		return y + ((x - y) & ((x - y) >> std::numeric_limits<T>::digits));
 }
 
 template<typename T>
+	requires (std::is_signed_v<T>)
 inline T branchlessIntMax(T x, T y) noexcept
 {
-    if constexpr (std::is_signed_v<T>)
-        return x - ((x - y) & ((x - y) >> std::numeric_limits<T>::digits));
-    else
-        static_assert(false);
+	//if constexpr (std::is_signed_v<T>)
+		return x - ((x - y) & ((x - y) >> std::numeric_limits<T>::digits));
 }
 
 template<int Y, typename T>
+	requires ((Y == 0) || std::is_signed_v<T>)
 inline T branchlessIntMax(T x) noexcept
 {
-    if constexpr (Y == 0)
-    {
-        if constexpr (std::is_signed_v<T>)
-            return x - (x & (x >> std::numeric_limits<T>::digits));
-        else    
-            return x;
-    }
-    else
-    {
-        if constexpr (std::is_signed_v<T>)
-            return x - ((x - Y) & ((x - Y) >> std::numeric_limits<T>::digits));
-        else
-            static_assert(false);
-    }
+	if constexpr (Y == 0)
+	{
+		if constexpr (std::is_signed_v<T>)
+			return x - (x & (x >> std::numeric_limits<T>::digits));
+		else    
+			return x;
+	}
+	else
+	{
+		//if constexpr (std::is_signed_v<T>)
+			return x - ((x - Y) & ((x - Y) >> std::numeric_limits<T>::digits));
+	}
 }
 
 } // namespace detail
 
 inline float saturate(float x)
 {
-    return std::clamp(x, 0.f, 1.f);
+	return std::clamp(x, 0.f, 1.f);
 }
 
 inline double saturate(double x)
 {
-    return std::clamp(x, 0.0, 1.0);
+	return std::clamp(x, 0.0, 1.0);
 }
 
 template<typename T, typename U>
+	requires (std::floating_point<U> || std::integral<U>)
 inline T saturate(U x) 
 {
-    if constexpr (std::is_integral_v<U>)
-    {
-        if constexpr (std::is_same_v<T, U>)
-            return x;
-        else if constexpr (std::is_integral_v<T> && std::is_unsigned_v<U>)
-            return T(std::min(x, U(std::numeric_limits<T>::max()))); // #TODO branchless
-        else if constexpr (std::is_integral_v<T>)
-            return T(std::clamp(x, U(0), U(std::numeric_limits<T>::max()))); // #TODO branchless
-        else if constexpr (std::is_floating_point_v<T> && std::is_unsigned_v<U>)
-            return T(x)/T(std::numeric_limits<U>::max());
-        else if constexpr (std::is_floating_point_v<T>)
-            return T(detail::branchlessIntMax<0>(x)/T(std::numeric_limits<U>::max()));
-    }
-    else if constexpr (std::is_floating_point_v<U>)
-    {
-        if constexpr (std::is_integral_v<T>)                        // #TODO branchless
-            return T(std::clamp(int(U(0.5) + x*U(std::numeric_limits<T>::max())), 0, int(std::numeric_limits<T>::max())));
-        else if constexpr (std::is_floating_point_v<T>)
-            return T(std::clamp(x, U(0), U(1)));
-    }
-
-    static_assert(false);
-    //return T();
+	if constexpr (std::is_integral_v<U>)
+	{
+		if constexpr (std::is_same_v<T, U>)
+			return x;
+		else if constexpr (std::is_integral_v<T> && std::is_unsigned_v<U>)
+			return T(std::min(x, U(std::numeric_limits<T>::max())));			// #TODO branchless
+		else if constexpr (std::is_integral_v<T>)
+			return T(std::clamp(x, U(0), U(std::numeric_limits<T>::max())));	// #TODO branchless
+		else if constexpr (std::is_floating_point_v<T> && std::is_unsigned_v<U>)
+			return T(x)/T(std::numeric_limits<U>::max());
+		else if constexpr (std::is_floating_point_v<T>)
+			return T(detail::branchlessIntMax<0>(x)/T(std::numeric_limits<U>::max()));
+	}
+	else //if constexpr (std::is_floating_point_v<U>)
+	{
+		if constexpr (std::is_integral_v<T>)		// #TODO branchless
+			return T(std::clamp(int(U(0.5) + x*U(std::numeric_limits<T>::max())), 0, int(std::numeric_limits<T>::max())));
+		else if constexpr (std::is_floating_point_v<T>)
+			return T(std::clamp(x, U(0), U(1)));
+	}
 }
 
 template<typename T, int MAX, typename U>
+	requires (std::floating_point<U> || std::integral<U>)
 inline T saturate(U x) 
 {
-    if constexpr (std::is_integral_v<U>)
-    {
-        if constexpr (std::is_same_v<T, U> && ((int)std::numeric_limits<T>::max() == MAX))
-            return x;
-        else if constexpr (std::is_integral_v<T> && std::is_unsigned_v<U>)
-            return T(std::min(x, U(MAX))); // #TODO branchless
-        else if constexpr (std::is_integral_v<T>)
-            return T(std::clamp(x, U(0), U(MAX))); // #TODO branchless
-        else if constexpr (std::is_floating_point_v<T> && std::is_unsigned_v<U>)
-            return T(x)/T(MAX);
-        else if constexpr (std::is_floating_point_v<T>)
-            return T(detail::branchlessIntMax<0>(x)/T(MAX));
-    }
-    else if constexpr (std::is_floating_point_v<U>)
-    {
-        if constexpr (std::is_integral_v<T>)                        // #TODO branchless
-            return T(std::clamp(int(U(0.5) + x*U(MAX)), 0, int(MAX)));
-        else if constexpr (std::is_floating_point_v<T>)
-            return T(std::clamp(x, U(0), U(1)));
-    }
-
-    static_assert(false);
-    //return T();
+	if constexpr (std::is_integral_v<U>)
+	{
+		if constexpr (std::is_same_v<T, U> && ((int)std::numeric_limits<T>::max() == MAX))
+			return x;
+		else if constexpr (std::is_integral_v<T> && std::is_unsigned_v<U>)
+			return T(std::min(x, U(MAX)));			// #TODO branchless
+		else if constexpr (std::is_integral_v<T>)
+			return T(std::clamp(x, U(0), U(MAX)));	// #TODO branchless
+		else if constexpr (std::is_floating_point_v<T> && std::is_unsigned_v<U>)
+			return T(x)/T(MAX);
+		else if constexpr (std::is_floating_point_v<T>)
+			return T(detail::branchlessIntMax<0>(x)/T(MAX));
+	}
+	else //if constexpr (std::is_floating_point_v<U>)
+	{
+		if constexpr (std::is_integral_v<T>)		// #TODO branchless
+			return T(std::clamp(int(U(0.5) + x*U(MAX)), 0, int(MAX)));
+		else if constexpr (std::is_floating_point_v<T>)
+			return T(std::clamp(x, U(0), U(1)));
+	}
 }
 
 template<typename T>
 inline T makeLinear(T x) noexcept
 { 
-    return (x <= T(0.04045)) ? x/T(12.92) : std::pow((x + T(0.055))/T(1.055), T(2.4)); 
+	return (x <= T(0.04045)) ? x/T(12.92) : std::pow((x + T(0.055))/T(1.055), T(2.4)); 
 }
 
 template<typename T>
 inline T makeSrgb(T x) noexcept
 { 
-    if (!(x == x)) 
-        return T(0); 
-    else if (x > T(1)) 
-        return T(1); 
-    else if (x < T(0)) 
-        return T(0); 
-    else if (x < T(0.0031308)) 
-        return T(12.92)*x; 
-    else 
-        return T(1.055)*std::pow(x, T(0.41666)) - T(0.055); 
+	if (!(x == x)) 
+		return T(0); 
+	else if (x > T(1)) 
+		return T(1); 
+	else if (x < T(0)) 
+		return T(0); 
+	else if (x < T(0.0031308)) 
+		return T(12.92)*x; 
+	else 
+		return T(1.055)*std::pow(x, T(0.41666)) - T(0.055); 
 }
 
 template<typename T, typename U>
@@ -192,13 +186,20 @@ inline T hsvToRgb(U h, U s, U v)
 
 	switch ((int)i) 
 	{
-		case 0: return { v, t, p };
-		case 1: return { q, v, p };
-		case 2: return { p, v, t };
-		case 3: return { p, q, v };
-		case 4: return { t, p, v };
-		case 5: return { v, p, q };
-		default: return { U(), U(), U() };
+		case 0: 
+			return { v, t, p };
+		case 1: 
+			return { q, v, p };
+		case 2: 
+			return { p, v, t };
+		case 3: 
+			return { p, q, v };
+		case 4: 
+			return { t, p, v };
+		case 5: 
+			return { v, p, q };
+		default: 
+			return { U(), U(), U() };
 	}
 }
 
@@ -247,19 +248,19 @@ inline T xyzToRgb(U x, U y, U z)
 template<typename T>
 inline T rgbToXyz(simd::float4 rgb)
 {
-    static const simd::float4 row0 = simd::set3(0.412453f, 0.212671f, 0.019334f);
-    static const simd::float4 row1 = simd::set3(0.357580f, 0.715160f, 0.119193f);
-    static const simd::float4 row2 = simd::set3(0.180423f, 0.072169f, 0.950227f);
-    return T(row0*simd::xxxx(rgb) + row1*simd::yyyy(rgb) + row2*simd::zzzz(rgb));
+	static const simd::float4 row0 = simd::set3(0.412453f, 0.212671f, 0.019334f);
+	static const simd::float4 row1 = simd::set3(0.357580f, 0.715160f, 0.119193f);
+	static const simd::float4 row2 = simd::set3(0.180423f, 0.072169f, 0.950227f);
+	return T(row0*simd::xxxx(rgb) + row1*simd::yyyy(rgb) + row2*simd::zzzz(rgb));
 }
 
 template<typename T>
 inline T xyzToRgb(simd::float4 xyz)
 {
-    static const simd::float4 row0 = simd::set3(3.240479f, -0.969256f, 0.055648f);
-    static const simd::float4 row1 = simd::set3(-1.537150f, 1.875992f, -0.204043f);
-    static const simd::float4 row2 = simd::set3(-0.498535f, 0.041556f, 1.057311f);
-    return T(row0*simd::xxxx(xyz) + row1*simd::yyyy(xyz) + row2*simd::zzzz(xyz));
+	static const simd::float4 row0 = simd::set3(3.240479f, -0.969256f, 0.055648f);
+	static const simd::float4 row1 = simd::set3(-1.537150f, 1.875992f, -0.204043f);
+	static const simd::float4 row2 = simd::set3(-0.498535f, 0.041556f, 1.057311f);
+	return T(row0*simd::xxxx(xyz) + row1*simd::yyyy(xyz) + row2*simd::zzzz(xyz));
 }
 
 #endif /* SIMD_HAS_FLOAT4 */

@@ -48,7 +48,7 @@ struct Tuple4
 			ar(x, y, z, w);
 	}
 
-	template<std::size_t I> T& get() noexcept
+	template<std::size_t I>	requires (I < 4) T& get() noexcept
 	{
 		if constexpr (I == 0)
 			return x;
@@ -56,12 +56,11 @@ struct Tuple4
 			return y;
 		else if constexpr (I == 2)
 			return z;
-		else if constexpr (I == 3)
+		else //if constexpr (I == 3)
 			return w;
-		static_assert(false);
 	}
 
-	template<std::size_t I> const T& get() const noexcept
+	template<std::size_t I> requires (I < 4) const T& get() const noexcept
 	{
 		if constexpr (I == 0)
 			return x;
@@ -69,9 +68,8 @@ struct Tuple4
 			return y;
 		else if constexpr (I == 2)
 			return z;
-		else if constexpr (I == 3)
+		else //if constexpr (I == 3)
 			return w;
-		static_assert(false);
 	}
 
 	T x, y, z, w;
@@ -84,6 +82,7 @@ struct Tuple4
 };
 
 template<std::size_t I, typename T>
+	requires (I < 4)
 inline T& get(Tuple4<T>& v) noexcept
 {
 	if constexpr (I == 0)
@@ -92,12 +91,12 @@ inline T& get(Tuple4<T>& v) noexcept
 		return v.y;
 	else if constexpr (I == 2)
 		return v.z;
-	else if constexpr (I == 3)
+	else //if constexpr (I == 3)
 		return v.w;
-	static_assert(false);
 }
 
 template<std::size_t I, typename T>
+	requires (I < 4)
 inline const T& get(const Tuple4<T>& v) noexcept
 {
 	if constexpr (I == 0)
@@ -106,12 +105,12 @@ inline const T& get(const Tuple4<T>& v) noexcept
 		return v.y;
 	else if constexpr (I == 2)
 		return v.z;
-	else if constexpr (I == 3)
+	else //if constexpr (I == 3)
 		return v.w;
-	static_assert(false);
 }
 
 template<std::size_t I, typename T>
+	requires (I < 4)
 inline T&& get(Tuple4<T>&& v) noexcept
 {
 	if constexpr (I == 0)
@@ -120,12 +119,12 @@ inline T&& get(Tuple4<T>&& v) noexcept
 		return v.y;
 	else if constexpr (I == 2)
 		return v.z;
-	else if constexpr (I == 3)
+	else //if constexpr (I == 3)
 		return v.w;
-	static_assert(false);
 }
 
 template<std::size_t I, typename T>
+	requires (I < 4)
 inline const T&& get(const Tuple4<T>&& v) noexcept
 {
 	if constexpr (I == 0)
@@ -134,9 +133,8 @@ inline const T&& get(const Tuple4<T>&& v) noexcept
 		return v.y;
 	else if constexpr (I == 2)
 		return v.z;
-	else if constexpr (I == 3)
+	else //if constexpr (I == 3)
 		return v.w;
-	static_assert(false);
 }
 
 } // namespace templates

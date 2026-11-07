@@ -225,25 +225,25 @@ inline std::basic_ostream<C, T>& operator<<(std::basic_ostream<C, T>& s, const P
 template<typename T>
 	requires (std::floating_point<T> || std::integral<T>)
 template<std::size_t I>
+	requires (I < 2)
 inline T& Point<T>::get() noexcept
 {
 	if constexpr (I == 0)
 		return x;
-	else if constexpr (I == 1)
+	else //if constexpr (I == 1)
 		return y;
-	static_assert(false);
 }
 
 template<typename T>
 	requires (std::floating_point<T> || std::integral<T>)
 template<std::size_t I>
+	requires (I < 2)
 inline const T& Point<T>::get() const noexcept
 {
 	if constexpr (I == 0)
 		return x;
-	else if constexpr (I == 1)
+	else //if constexpr (I == 1)
 		return y;
-	static_assert(false);
 }
 
 template<typename T>
@@ -293,47 +293,43 @@ inline Point<T>& Point<T>::setMaximum(const Point<T>& point1, const Point<T>& po
 }
 
 template<std::size_t I, typename T>
-	requires (std::floating_point<T> || std::integral<T>)
+	requires ((I < 2) && (std::floating_point<T> || std::integral<T>))
 inline T& get(Point<T>& point) noexcept
 {
 	if constexpr (I == 0)
 		return point.x;
-	else if constexpr (I == 1)
+	else //if constexpr (I == 1)
 		return point.y;
-	static_assert(false);
 }
 
 template<std::size_t I, typename T>
-	requires (std::floating_point<T> || std::integral<T>)
+	requires ((I < 2) && (std::floating_point<T> || std::integral<T>))
 inline const T& get(const Point<T>& point) noexcept
 {
 	if constexpr (I == 0)
 		return point.x;
-	else if constexpr (I == 1)
+	else //if constexpr (I == 1)
 		return point.y;
-	static_assert(false);
 }
 
 template<std::size_t I, typename T>
-	requires (std::floating_point<T> || std::integral<T>)
+	requires ((I < 2) && (std::floating_point<T> || std::integral<T>))
 inline T&& get(Point<T>&& point) noexcept
 {
 	if constexpr (I == 0)
 		return point.x;
-	else if constexpr (I == 1)
+	else //if constexpr (I == 1)
 		return point.y;
-	static_assert(false);
 }
 
 template<std::size_t I, typename T>
-	requires (std::floating_point<T> || std::integral<T>)
+	requires ((I < 2) && (std::floating_point<T> || std::integral<T>))
 inline const T&& get(const Point<T>&& point) noexcept
 {
 	if constexpr (I == 0)
 		return point.x;
-	else if constexpr (I == 1)
+	else //if constexpr (I == 1)
 		return point.y;
-	static_assert(false);
 }
 
 template<typename T>

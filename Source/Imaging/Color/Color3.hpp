@@ -79,8 +79,8 @@ struct Color3<T>
 	template<typename A> void load(A& ar) { ar(r, g, b); }
 	template<typename A> void save(A& ar) const { ar(r, g, b); }
 
-	template<std::size_t I> T& get() noexcept;
-	template<std::size_t I> const T& get() const noexcept;
+	template<std::size_t I> requires (I < 3) T& get() noexcept;
+	template<std::size_t I> requires (I < 3) const T& get() const noexcept;
 
 	template<typename U> static Color3 fromPackedRgb(U c) noexcept;
 	std::uint32_t toPackedRgb() const noexcept { return toPackedRgb<std::uint32_t>(); }
@@ -199,8 +199,8 @@ struct Color3<T>
 	template<typename A> void load(A& ar) { ar(r, g, b); }
 	template<typename A> void save(A& ar) const { ar(r, g, b); }
 
-	template<std::size_t I> T& get() noexcept;
-	template<std::size_t I> const T& get() const noexcept;
+	template<std::size_t I> requires (I < 3) T& get() noexcept;
+	template<std::size_t I> requires (I < 3) const T& get() const noexcept;
 
 	// #TODO from/toPacked
 
@@ -298,8 +298,8 @@ struct alignas(16) Color3<float>
 	template<typename A> void load(A& ar);
 	template<typename A> void save(A& ar) const { ar(r, g, b); }
 
-	template<std::size_t I> float& get() noexcept;
-	template<std::size_t I> const float& get() const noexcept;
+	template<std::size_t I> requires (I < 3) float& get() noexcept;
+	template<std::size_t I> requires (I < 3) const float& get() const noexcept;
 	template<typename U> U& get() noexcept;				// intentionally undefined
 	template<typename U> const U& get() const noexcept;	// intentionally undefined
 	template<> simd::float4& get() noexcept { return rgb; }
@@ -463,28 +463,28 @@ inline std::basic_ostream<C, T>& operator<<(std::basic_ostream<C, T>& s, const C
 
 template<std::floating_point T>
 template<std::size_t I>
+	requires (I < 3)
 inline T& Color3<T>::get() noexcept
 {
 	if constexpr (I == 0)
 		return r;
 	else if constexpr (I == 1)
 		return g;
-	else if constexpr (I == 2)
+	else //if constexpr (I == 2)
 		return b;
-	static_assert(false);
 }
 
 template<std::floating_point T>
 template<std::size_t I>
+	requires (I < 3)
 inline const T& Color3<T>::get() const noexcept
 {
 	if constexpr (I == 0)
 		return r;
 	else if constexpr (I == 1)
 		return g;
-	else if constexpr (I == 2)
+	else //if constexpr (I == 2)
 		return b;
-	static_assert(false);
 }
 
 template<std::floating_point T>
@@ -591,28 +591,28 @@ inline Color3<T>& Color3<T>::makeSrgb() noexcept
 
 template<std::integral T>
 template<std::size_t I>
+	requires (I < 3)
 inline T& Color3<T>::get() noexcept
 {
 	if constexpr (I == 0)
 		return r;
 	else if constexpr (I == 1)
 		return g;
-	else if constexpr (I == 2)
+	else //if constexpr (I == 2)
 		return b;
-	static_assert(false);
 }
 
 template<std::integral T>
 template<std::size_t I>
+	requires (I < 3)
 inline const T& Color3<T>::get() const noexcept
 {
 	if constexpr (I == 0)
 		return r;
 	else if constexpr (I == 1)
 		return g;
-	else if constexpr (I == 2)
+	else //if constexpr (I == 2)
 		return b;
-	static_assert(false);
 }
 
 template<std::integral T>
@@ -709,27 +709,27 @@ inline void Color3<float>::load(A& ar)
 }
 
 template<std::size_t I>
+	requires (I < 3)
 inline float& Color3<float>::get() noexcept
 {
 	if constexpr (I == 0)
 		return r;
 	else if constexpr (I == 1)
 		return g;
-	else if constexpr (I == 2)
+	else //if constexpr (I == 2)
 		return b;
-	static_assert(false);
 }
 
 template<std::size_t I>
+	requires (I < 3)
 inline const float& Color3<float>::get() const noexcept
 {
 	if constexpr (I == 0)
 		return r;
 	else if constexpr (I == 1)
 		return g;
-	else if constexpr (I == 2)
+	else //if constexpr (I == 2)
 		return b;
-	static_assert(false);
 }
 
 template<typename U> 
@@ -769,55 +769,51 @@ inline U Color3<float>::toPackedBgr() const noexcept
 #endif /* SIMD_HAS_FLOAT4 */
 
 template<std::size_t I, typename T>
-	requires (std::floating_point<T> || std::integral<T>)
+	requires ((I < 3) && (std::floating_point<T> || std::integral<T>))
 inline T& get(Color3<T>& c) noexcept
 {
 	if constexpr (I == 0)
 		return c.r;
 	else if constexpr (I == 1)
 		return c.g;
-	else if constexpr (I == 2)
+	else //if constexpr (I == 2)
 		return c.b;
-	static_assert(false);
 }
 
 template<std::size_t I, typename T>
-	requires (std::floating_point<T> || std::integral<T>)
+	requires ((I < 3) && (std::floating_point<T> || std::integral<T>))
 inline const T& get(const Color3<T>& c) noexcept
 {
 	if constexpr (I == 0)
 		return c.r;
 	else if constexpr (I == 1)
 		return c.g;
-	else if constexpr (I == 2)
+	else //if constexpr (I == 2)
 		return c.b;
-	static_assert(false);
 }
 
 template<std::size_t I, typename T>
-	requires (std::floating_point<T> || std::integral<T>)
+	requires ((I < 3) && (std::floating_point<T> || std::integral<T>))
 inline T&& get(Color3<T>&& c) noexcept
 {
 	if constexpr (I == 0)
 		return c.r;
 	else if constexpr (I == 1)
 		return c.g;
-	else if constexpr (I == 2)
+	else //if constexpr (I == 2)
 		return c.b;
-	static_assert(false);
 }
 
 template<std::size_t I, typename T>
-	requires (std::floating_point<T> || std::integral<T>)
+	requires ((I < 3) && (std::floating_point<T> || std::integral<T>))
 inline const T&& get(const Color3<T>&& c) noexcept
 {
 	if constexpr (I == 0)
 		return c.r;
 	else if constexpr (I == 1)
 		return c.g;
-	else if constexpr (I == 2)
+	else //if constexpr (I == 2)
 		return c.b;
-	static_assert(false);
 }
 
 //template<typename T, typename U>

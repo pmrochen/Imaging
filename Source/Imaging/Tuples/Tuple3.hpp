@@ -48,26 +48,24 @@ struct Tuple3
 			ar(x, y, z); 
 	}
 
-	template<std::size_t I> T& get() noexcept
+	template<std::size_t I> requires (I < 3) T& get() noexcept
 	{
 		if constexpr (I == 0)
 			return x;
 		else if constexpr (I == 1)
 			return y;
-		else if constexpr (I == 2)
+		else //if constexpr (I == 2)
 			return z;
-		static_assert(false);
 	}
 
-	template<std::size_t I> const T& get() const noexcept
+	template<std::size_t I> requires (I < 3) const T& get() const noexcept
 	{
 		if constexpr (I == 0)
 			return x;
 		else if constexpr (I == 1)
 			return y;
-		else if constexpr (I == 2)
+		else //if constexpr (I == 2)
 			return z;
-		static_assert(false);
 	}
 
 	T x, y, z;
@@ -80,51 +78,51 @@ struct Tuple3
 };
 
 template<std::size_t I, typename T>
+	requires (I < 3)
 inline T& get(Tuple3<T>& v) noexcept
 {
 	if constexpr (I == 0)
 		return v.x;
 	else if constexpr (I == 1)
 		return v.y;
-	else if constexpr (I == 2)
+	else //if constexpr (I == 2)
 		return v.z;
-	static_assert(false);
 }
 
 template<std::size_t I, typename T>
+	requires (I < 3)
 inline const T& get(const Tuple3<T>& v) noexcept
 {
 	if constexpr (I == 0)
 		return v.x;
 	else if constexpr (I == 1)
 		return v.y;
-	else if constexpr (I == 2)
+	else //if constexpr (I == 2)
 		return v.z;
-	static_assert(false);
 }
 
 template<std::size_t I, typename T>
+	requires (I < 3)
 inline T&& get(Tuple3<T>&& v) noexcept
 {
 	if constexpr (I == 0)
 		return v.x;
 	else if constexpr (I == 1)
 		return v.y;
-	else if constexpr (I == 2)
+	else //if constexpr (I == 2)
 		return v.z;
-	static_assert(false);
 }
 
 template<std::size_t I, typename T>
+	requires (I < 3)
 inline const T&& get(const Tuple3<T>&& v) noexcept
 {
 	if constexpr (I == 0)
 		return v.x;
 	else if constexpr (I == 1)
 		return v.y;
-	else if constexpr (I == 2)
+	else //if constexpr (I == 2)
 		return v.z;
-	static_assert(false);
 }
 
 } // namespace templates
