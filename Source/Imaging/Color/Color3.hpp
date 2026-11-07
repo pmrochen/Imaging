@@ -24,7 +24,6 @@
 #include "../Constants.hpp"
 #include "../Tuples/Tuple3.hpp"
 #include "ColorSpace.hpp"
-#include "../Pixel/ChannelOrder.hpp"
 #include "../Pixel/PixelFormat.hpp"
 
 namespace imaging {
@@ -301,10 +300,8 @@ struct alignas(16) Color3<float>
 
 	template<std::size_t I> requires (I < 3) float& get() noexcept;
 	template<std::size_t I> requires (I < 3) const float& get() const noexcept;
-	template<typename U> U& get() noexcept;				// intentionally undefined
-	template<typename U> const U& get() const noexcept;	// intentionally undefined
-	template<> simd::float4& get() noexcept { return rgb; }
-	template<> const simd::float4& get() const noexcept { return rgb; }
+	template<typename U> requires std::same_as<U, simd::float4> simd::float4& as() noexcept { return rgb; }
+	template<typename U> requires std::same_as<U, simd::float4> const simd::float4& as() const noexcept { return rgb; }
 
 	template<typename U> static Color3 fromPackedRgb(U c) noexcept;
 	std::uint32_t toPackedRgb() const noexcept { return toPackedRgb<std::uint32_t>(); }
@@ -326,7 +323,7 @@ struct alignas(16) Color3<float>
 	template<typename U> static Color3 fromHsv(U c) { return hsvToRgb<Color3>(c.template get<0>(), c.template get<1>(), c.template get<2>()); }
 	template<typename U> U toHsv() const { return rgbToHsv<U>(r, g, b); }
 	static Color3 fromXyz(float x, float y, float z) { return xyzToRgb<Color3>(x, y, z); }
-	template<typename U> static Color3 fromXyz(U c) { return xyzToRgb<Color3>((simd::float4)c/*c.get<simd::float4>()*/); }
+	template<typename U> static Color3 fromXyz(U c) { return xyzToRgb<Color3>((simd::float4)c/*c.as<simd::float4>()*/); }
 	template<typename U> U toXyz() const { return rgbToXyz<U>(rgb); }
 
 	bool isZero() const noexcept { return simd::all3(simd::equal(rgb, simd::zero4<float>())); }
@@ -375,16 +372,16 @@ struct alignas(16) Color3<float>
 	};
 };
 
-const Color3<float> Color3<float>::ZERO{};
-const Color3<float> Color3<float>::UNIT_R{ 1.f, 0.f, 0.f };
-const Color3<float> Color3<float>::UNIT_G{ 0.f, 1.f, 0.f };
-const Color3<float> Color3<float>::UNIT_B{ 0.f, 0.f, 1.f };
-const Color3<float> Color3<float>::ONE{ 1.f, 1.f, 1.f };
-const Color3<float> Color3<float>::HALF{ 0.5f, 0.5f, 0.5f };
-const Color3<float> Color3<float>::TOLERANCE{ Constants<float>::TOLERANCE, Constants<float>::TOLERANCE, Constants<float>::TOLERANCE };
-const Color3<float> Color3<float>::INF{ std::numeric_limits<float>::infinity(), std::numeric_limits<float>::infinity(), std::numeric_limits<float>::infinity() };
-const Color3<float> Color3<float>::MINUS_INF{ -std::numeric_limits<float>::infinity(), -std::numeric_limits<float>::infinity(), -std::numeric_limits<float>::infinity() };
-const Color3<float> Color3<float>::LUMINANCE{ 0.2126f, 0.7152f, 0.0722f };
+inline const Color3<float> Color3<float>::ZERO{};
+inline const Color3<float> Color3<float>::UNIT_R{ 1.f, 0.f, 0.f };
+inline const Color3<float> Color3<float>::UNIT_G{ 0.f, 1.f, 0.f };
+inline const Color3<float> Color3<float>::UNIT_B{ 0.f, 0.f, 1.f };
+inline const Color3<float> Color3<float>::ONE{ 1.f, 1.f, 1.f };
+inline const Color3<float> Color3<float>::HALF{ 0.5f, 0.5f, 0.5f };
+inline const Color3<float> Color3<float>::TOLERANCE{ Constants<float>::TOLERANCE, Constants<float>::TOLERANCE, Constants<float>::TOLERANCE };
+inline const Color3<float> Color3<float>::INF{ std::numeric_limits<float>::infinity(), std::numeric_limits<float>::infinity(), std::numeric_limits<float>::infinity() };
+inline const Color3<float> Color3<float>::MINUS_INF{ -std::numeric_limits<float>::infinity(), -std::numeric_limits<float>::infinity(), -std::numeric_limits<float>::infinity() };
+inline const Color3<float> Color3<float>::LUMINANCE{ 0.2126f, 0.7152f, 0.0722f };
 
 #endif /* SIMD_HAS_FLOAT4 */
 

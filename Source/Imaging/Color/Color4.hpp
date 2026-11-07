@@ -24,7 +24,6 @@
 #include "../Constants.hpp"
 #include "../Tuples/Tuple4.hpp"
 #include "ColorSpace.hpp"
-#include "../Pixel/ChannelOrder.hpp"
 #include "../Pixel/PixelFormat.hpp"
 #include "Color3.hpp"
 
@@ -289,10 +288,8 @@ struct alignas(16) Color4<float>
 
 	template<std::size_t I> requires (I < 4) float& get() noexcept;
 	template<std::size_t I> requires (I < 4) const float& get() const noexcept;
-	template<typename U> U& get() noexcept;				// intentionally undefined
-	template<typename U> const U& get() const noexcept;	// intentionally undefined
-	template<> simd::float4& get() noexcept { return rgba; }
-	template<> const simd::float4& get() const noexcept { return rgba; }
+	template<typename U> requires std::same_as<U, simd::float4> simd::float4& as() noexcept { return rgba; }
+	template<typename U> requires std::same_as<U, simd::float4> const simd::float4& as() const noexcept { return rgba; }
 
 	template<typename U> static Color4 fromPackedRgba(U c) noexcept;
 	std::uint32_t toPackedRgba() const noexcept { return toPackedRgba<std::uint32_t>(); }
@@ -359,17 +356,17 @@ struct alignas(16) Color4<float>
 	};
 };
 
-const Color4<float> Color4<float>::ZERO{};
-const Color4<float> Color4<float>::UNIT_R{ 1.f, 0.f, 0.f, 0.f };
-const Color4<float> Color4<float>::UNIT_G{ 0.f, 1.f, 0.f, 0.f };
-const Color4<float> Color4<float>::UNIT_B{ 0.f, 0.f, 1.f, 0.f };
-const Color4<float> Color4<float>::UNIT_A{ 0.f, 0.f, 0.f, 1.f };
-const Color4<float> Color4<float>::ONE{ 1.f, 1.f, 1.f, 1.f };
-const Color4<float> Color4<float>::HALF{ 0.5f, 0.5f, 0.5f, 0.5f };
-const Color4<float> Color4<float>::TOLERANCE{ Constants<float>::TOLERANCE, Constants<float>::TOLERANCE, Constants<float>::TOLERANCE, Constants<float>::TOLERANCE };
-const Color4<float> Color4<float>::INF{ std::numeric_limits<float>::infinity(), std::numeric_limits<float>::infinity(), std::numeric_limits<float>::infinity(), std::numeric_limits<float>::infinity() };
-const Color4<float> Color4<float>::MINUS_INF{ -std::numeric_limits<float>::infinity(), -std::numeric_limits<float>::infinity(), -std::numeric_limits<float>::infinity(), -std::numeric_limits<float>::infinity() };
-const Color4<float> Color4<float>::LUMINANCE{ 0.2126f, 0.7152f, 0.0722f, 0.f };
+inline const Color4<float> Color4<float>::ZERO{};
+inline const Color4<float> Color4<float>::UNIT_R{ 1.f, 0.f, 0.f, 0.f };
+inline const Color4<float> Color4<float>::UNIT_G{ 0.f, 1.f, 0.f, 0.f };
+inline const Color4<float> Color4<float>::UNIT_B{ 0.f, 0.f, 1.f, 0.f };
+inline const Color4<float> Color4<float>::UNIT_A{ 0.f, 0.f, 0.f, 1.f };
+inline const Color4<float> Color4<float>::ONE{ 1.f, 1.f, 1.f, 1.f };
+inline const Color4<float> Color4<float>::HALF{ 0.5f, 0.5f, 0.5f, 0.5f };
+inline const Color4<float> Color4<float>::TOLERANCE{ Constants<float>::TOLERANCE, Constants<float>::TOLERANCE, Constants<float>::TOLERANCE, Constants<float>::TOLERANCE };
+inline const Color4<float> Color4<float>::INF{ std::numeric_limits<float>::infinity(), std::numeric_limits<float>::infinity(), std::numeric_limits<float>::infinity(), std::numeric_limits<float>::infinity() };
+inline const Color4<float> Color4<float>::MINUS_INF{ -std::numeric_limits<float>::infinity(), -std::numeric_limits<float>::infinity(), -std::numeric_limits<float>::infinity(), -std::numeric_limits<float>::infinity() };
+inline const Color4<float> Color4<float>::LUMINANCE{ 0.2126f, 0.7152f, 0.0722f, 0.f };
 
 #endif /* SIMD_HAS_FLOAT4 */
 
