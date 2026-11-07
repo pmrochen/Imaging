@@ -8,8 +8,8 @@
 #include <stdexcept>
 #include <string>
 #include <cstdint>
+#include "../Constants.hpp"
 #include "../Color/ColorMask.hpp"
-#include "ChannelOrder.hpp"
 #include "../Pixel/Pixel.inl"
 
 namespace imaging {
