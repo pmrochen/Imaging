@@ -290,3 +290,8 @@ target_compile_options(${IMAGING_LIB_NAME}
 		$<$<OR:$<CXX_COMPILER_ID:Clang>,$<CXX_COMPILER_ID:AppleClang>,$<CXX_COMPILER_ID:GNU>>:-Wno-deprecated-literal-operator>
 		#$<$<CXX_COMPILER_ID:MSVC>:/wd4100>
 )
+
+if (IMAGING_WITH_TESTS)
+    enable_testing()
+    add_subdirectory(Tests)
+endif()
