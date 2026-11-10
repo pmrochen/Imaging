@@ -28,6 +28,25 @@
 
 namespace imaging {
 namespace templates {
+namespace detail {
+
+#ifdef _MSC_VER
+
+// MSVC workaround: MSVC does not distinguish out-of-class member definitions of partial specializations that differ only
+// in their constraints. It attributes the definition of ZERO of the integral specialization to the floating-point
+// specialization and fails with error C2086 (redefinition). With MSVC, integral vectors therefore inherit ZERO from
+// this unconstrained base instead.
+template<typename V>
+struct IntegralVectorConstants
+{
+	static const V ZERO;
+};
+
+template<typename V> const V IntegralVectorConstants<V>::ZERO{};
+
+#endif /* _MSC_VER */
+
+} // namespace detail
 
 template<typename T>
 	requires (std::floating_point<T> || std::integral<T>)
@@ -156,6 +175,9 @@ template<std::floating_point T> const Color3<T> Color3<T>::LUMINANCE{ T(0.2126),
 
 template<std::integral T>
 struct Color3<T>
+#ifdef _MSC_VER
+	: public detail::IntegralVectorConstants<Color3<T>> // provides ZERO (MSVC workaround)
+#endif
 {
 	using ComponentType = T;
 	using ConstArg = const Color3&;
@@ -199,8 +221,8 @@ struct Color3<T>
 	template<typename A> void load(A& ar) { ar(r, g, b); }
 	template<typename A> void save(A& ar) const { ar(r, g, b); }
 
-	template<std::size_t I> requires (I < 3) T& get() noexcept;
-	template<std::size_t I> requires (I < 3) const T& get() const noexcept;
+	template<std::size_t I> requires (I < 3) T& get() noexcept { if constexpr (I == 0) return r; else if constexpr (I == 1) return g; else return b; }
+	template<std::size_t I> requires (I < 3) const T& get() const noexcept { if constexpr (I == 0) return r; else if constexpr (I == 1) return g; else return b; }
 
 	// #TODO from/toPacked
 
@@ -217,15 +239,19 @@ struct Color3<T>
 	T getMaxComponent() const { return std::max(std::max(r, g), b); }
 	Color3& setZero() noexcept { r = T(); g = T(); b = T(); return *this; }
 	Color3& set(T r, T g, T b) noexcept { this->r = r; this->g = g; this->b = b; return *this; }
-	Color3& setMinimum(const Color3& c1, const Color3& c2);
-	Color3& setMaximum(const Color3& c1, const Color3& c2);
+	Color3& setMinimum(const Color3& c1, const Color3& c2) { r = std::min(c1.r, c2.r); g = std::min(c1.g, c2.g); b = std::min(c1.b, c2.b); return *this; }
+	Color3& setMaximum(const Color3& c1, const Color3& c2) { r = std::max(c1.r, c2.r); g = std::max(c1.g, c2.g); b = std::max(c1.b, c2.b); return *this; }
 
+#ifndef _MSC_VER
 	static const Color3 ZERO;
+#endif
 
 	T r, g, b;
 };
 
+#ifndef _MSC_VER
 template<std::integral T> const Color3<T> Color3<T>::ZERO{};
+#endif
 
 #if SIMD_HAS_FLOAT4
 
@@ -587,49 +613,49 @@ inline Color3<T>& Color3<T>::makeSrgb() noexcept
 	return *this;
 }
 
-template<std::integral T>
-template<std::size_t I>
-	requires (I < 3)
-inline T& Color3<T>::get() noexcept
-{
-	if constexpr (I == 0)
-		return r;
-	else if constexpr (I == 1)
-		return g;
-	else //if constexpr (I == 2)
-		return b;
-}
+// template<std::integral T>
+// template<std::size_t I>
+// 	requires (I < 3)
+// inline T& Color3<T>::get() noexcept
+// {
+// 	if constexpr (I == 0)
+// 		return r;
+// 	else if constexpr (I == 1)
+// 		return g;
+// 	else //if constexpr (I == 2)
+// 		return b;
+// }
 
-template<std::integral T>
-template<std::size_t I>
-	requires (I < 3)
-inline const T& Color3<T>::get() const noexcept
-{
-	if constexpr (I == 0)
-		return r;
-	else if constexpr (I == 1)
-		return g;
-	else //if constexpr (I == 2)
-		return b;
-}
+// template<std::integral T>
+// template<std::size_t I>
+// 	requires (I < 3)
+// inline const T& Color3<T>::get() const noexcept
+// {
+// 	if constexpr (I == 0)
+// 		return r;
+// 	else if constexpr (I == 1)
+// 		return g;
+// 	else //if constexpr (I == 2)
+// 		return b;
+// }
 
-template<std::integral T>
-inline Color3<T>& Color3<T>::setMinimum(const Color3<T>& c1, const Color3<T>& c2)
-{
-	r = std::min(c1.r, c2.r);
-	g = std::min(c1.g, c2.g);
-	b = std::min(c1.b, c2.b);
-	return *this;
-}
+// template<std::integral T>
+// inline Color3<T>& Color3<T>::setMinimum(const Color3<T>& c1, const Color3<T>& c2)
+// {
+// 	r = std::min(c1.r, c2.r);
+// 	g = std::min(c1.g, c2.g);
+// 	b = std::min(c1.b, c2.b);
+// 	return *this;
+// }
 
-template<std::integral T>
-inline Color3<T>& Color3<T>::setMaximum(const Color3<T>& c1, const Color3<T>& c2)
-{
-	r = std::max(c1.r, c2.r);
-	g = std::max(c1.g, c2.g);
-	b = std::max(c1.b, c2.b);
-	return *this;
-}
+// template<std::integral T>
+// inline Color3<T>& Color3<T>::setMaximum(const Color3<T>& c1, const Color3<T>& c2)
+// {
+// 	r = std::max(c1.r, c2.r);
+// 	g = std::max(c1.g, c2.g);
+// 	b = std::max(c1.b, c2.b);
+// 	return *this;
+// }
 
 #if SIMD_HAS_FLOAT4
 

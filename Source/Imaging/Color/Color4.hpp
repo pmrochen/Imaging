@@ -156,6 +156,9 @@ template<std::floating_point T> const Color4<T> Color4<T>::LUMINANCE{ T(0.2126),
 
 template<std::integral T>
 struct Color4<T>
+#ifdef _MSC_VER
+	: public detail::IntegralVectorConstants<Color4<T>> // provides ZERO (MSVC workaround)
+#endif
 {
 	using ComponentType = T;
 	using ConstArg = const Color4&;
@@ -201,8 +204,8 @@ struct Color4<T>
 	template<typename A> void load(A& ar) { ar(r, g, b, a); }
 	template<typename A> void save(A& ar) const { ar(r, g, b, a); }
 
-	template<std::size_t I> requires (I < 4) T& get() noexcept;
-	template<std::size_t I> requires (I < 4) const T& get() const noexcept;
+	template<std::size_t I> requires (I < 4) T& get() noexcept { if constexpr (I == 0) return r; else if constexpr (I == 1) return g; else if constexpr (I == 2) return b; else return a; }
+	template<std::size_t I> requires (I < 4) const T& get() const noexcept { if constexpr (I == 0) return r; else if constexpr (I == 1) return g; else if constexpr (I == 2) return b; else return a; }
 
 	// #TODO from/toPacked
 
@@ -221,15 +224,19 @@ struct Color4<T>
 	T getMaxComponent() const { return std::max(std::max(std::max(r, g), b), a); }
 	Color4& setZero() noexcept { r = T(); g = T(); b = T(); a = T(); return *this; }
 	Color4& set(T r, T g, T b, T a) noexcept { this->r = r; this->g = g; this->b = b; this->a = a; return *this; }
-	Color4& setMinimum(const Color4& c1, const Color4& c2);
-	Color4& setMaximum(const Color4& c1, const Color4& c2);
+	Color4& setMinimum(const Color4& c1, const Color4& c2) { r = std::min(c1.r, c2.r); g = std::min(c1.g, c2.g); b = std::min(c1.b, c2.b); a = std::min(c1.a, c2.a); return *this; }
+	Color4& setMaximum(const Color4& c1, const Color4& c2) { r = std::max(c1.r, c2.r); g = std::max(c1.g, c2.g); b = std::max(c1.b, c2.b); a = std::max(c1.a, c2.a); return *this; }
 
+#ifndef _MSC_VER
 	static const Color4 ZERO;
+#endif
 
 	T r, g, b, a;
 };
 
+#ifndef _MSC_VER
 template<std::integral T> const Color4<T> Color4<T>::ZERO{};
+#endif
 
 #if SIMD_HAS_FLOAT4
 
@@ -581,55 +588,55 @@ inline Color4<T>& Color4<T>::makeSrgb() noexcept
 	return *this;
 }
 
-template<std::integral T>
-template<std::size_t I>
-	requires (I < 4) 
-inline T& Color4<T>::get() noexcept
-{
-	if constexpr (I == 0)
-		return r;
-	else if constexpr (I == 1)
-		return g;
-	else if constexpr (I == 2)
-		return b;
-	else //if constexpr (I == 3)
-		return a;
-}
+// template<std::integral T>
+// template<std::size_t I>
+// 	requires (I < 4) 
+// inline T& Color4<T>::get() noexcept
+// {
+// 	if constexpr (I == 0)
+// 		return r;
+// 	else if constexpr (I == 1)
+// 		return g;
+// 	else if constexpr (I == 2)
+// 		return b;
+// 	else //if constexpr (I == 3)
+// 		return a;
+// }
 
-template<std::integral T>
-template<std::size_t I>
-	requires (I < 4) 
-inline const T& Color4<T>::get() const noexcept
-{
-	if constexpr (I == 0)
-		return r;
-	else if constexpr (I == 1)
-		return g;
-	else if constexpr (I == 2)
-		return b;
-	else //if constexpr (I == 3)
-		return a;
-}
+// template<std::integral T>
+// template<std::size_t I>
+// 	requires (I < 4) 
+// inline const T& Color4<T>::get() const noexcept
+// {
+// 	if constexpr (I == 0)
+// 		return r;
+// 	else if constexpr (I == 1)
+// 		return g;
+// 	else if constexpr (I == 2)
+// 		return b;
+// 	else //if constexpr (I == 3)
+// 		return a;
+// }
 
-template<std::integral T>
-inline Color4<T>& Color4<T>::setMinimum(const Color4<T>& c1, const Color4<T>& c2)
-{
-	r = std::min(c1.r, c2.r);
-	g = std::min(c1.g, c2.g);
-	b = std::min(c1.b, c2.b);
-	a = std::min(c1.a, c2.a);
-	return *this;
-}
+// template<std::integral T>
+// inline Color4<T>& Color4<T>::setMinimum(const Color4<T>& c1, const Color4<T>& c2)
+// {
+// 	r = std::min(c1.r, c2.r);
+// 	g = std::min(c1.g, c2.g);
+// 	b = std::min(c1.b, c2.b);
+// 	a = std::min(c1.a, c2.a);
+// 	return *this;
+// }
 
-template<std::integral T>
-inline Color4<T>& Color4<T>::setMaximum(const Color4<T>& c1, const Color4<T>& c2)
-{
-	r = std::max(c1.r, c2.r);
-	g = std::max(c1.g, c2.g);
-	b = std::max(c1.b, c2.b);
-	a = std::max(c1.a, c2.a);
-	return *this;
-}
+// template<std::integral T>
+// inline Color4<T>& Color4<T>::setMaximum(const Color4<T>& c1, const Color4<T>& c2)
+// {
+// 	r = std::max(c1.r, c2.r);
+// 	g = std::max(c1.g, c2.g);
+// 	b = std::max(c1.b, c2.b);
+// 	a = std::max(c1.a, c2.a);
+// 	return *this;
+// }
 
 #if SIMD_HAS_FLOAT4
 
