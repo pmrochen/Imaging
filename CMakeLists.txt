@@ -291,6 +291,15 @@ target_compile_options(${IMAGING_LIB_NAME}
 		#$<$<CXX_COMPILER_ID:MSVC>:/wd4100>
 )
 
+# The library accesses data through references of other types, which is only well defined
+# without type-based (strict) aliasing optimizations. MSVC and clang-cl do not perform them.
+if(NOT CMAKE_CXX_COMPILER_FRONTEND_VARIANT STREQUAL "MSVC")
+	target_compile_options(${IMAGING_LIB_NAME}
+		INTERFACE
+			$<$<COMPILE_LANG_AND_ID:CXX,GNU,Clang,AppleClang,IntelLLVM>:-fno-strict-aliasing>
+	)
+endif()
+
 if (IMAGING_WITH_TESTS)
     enable_testing()
     add_subdirectory(Tests)
